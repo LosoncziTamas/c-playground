@@ -1,0 +1,7 @@
+- threading
+- file i/o
+- hashmap
+- linked list
+- 3rd party abstraction
+- memory
+- string utilities (concat, reverse, find, lovercase, uppercase, trim)
