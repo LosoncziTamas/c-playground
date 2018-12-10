@@ -4,7 +4,8 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "cc string1.c -g",
+            "command": "cc",
+            "args": ["${file}", "-o", "${fileBasenameNoExtension}.out", "-g"],
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -13,7 +14,13 @@
         {
             "label": "launch",
             "type": "shell",
-            "command": "./a.out"
+            "command": "./${fileBasenameNoExtension}.out "
+        },
+        {
+            "label": "clean",
+            "type": "shell",
+            "command": "rm",
+            "args": ["-r", "*.out", "*.dSYM"]
         }
     ]
 }
