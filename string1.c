@@ -3,7 +3,7 @@
 
 size_t len(char* str) {
     size_t result = 0;
-    for(;(*str) == '\0'; ++str) {
+    for(;(*str) != '\0'; ++str) {
         ++result;
     }
     return result;
@@ -12,7 +12,7 @@ size_t len(char* str) {
 void copyString(char* from, char* to) {
     while ((*from) != '\0') {
         *(to++) = *(from++);
-    }    
+    }
 }
 
 char* concatenate(char* str1, char* str2) {
@@ -20,16 +20,15 @@ char* concatenate(char* str1, char* str2) {
     size_t len2 = len(str2);
     char *result = malloc((len1 + len2 + 1) * sizeof(char));
     int j = len1;
-    for (int i = 0; (*str1) != '\0' && (*str2) != '\0';) {
+    for (int i = 0; (*str1) != '\0' || (*str2) != '\0';) {
         if ((*str1) != '\0') {
-            printf("%c", *str1);
             result[i++] = *(str1++);
         }
-        if ((*str1) != '\0') {
-            printf("%c", *str2);
+        if ((*str2) != '\0') {
             result[j++] = *(str2++);
         }
     }
+    result[len1 + len2] = '\0';
     return result;
 }
 
@@ -59,11 +58,14 @@ int main(void) {
 
     char str3[17] = {0}; 
     copyString(string, str3);
-    printf("%s", str3);
+    printf("%zu", len(str3));
     printf("\n");
 
     char* string4 = "1234";
     char c2 = *(string4++);
     printf("%c", c2);
+    printf("\n");
+
+    printf("%s", concatenate("This ", "is a string"));
     printf("\n");
 }
