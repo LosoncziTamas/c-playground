@@ -42,9 +42,7 @@ void reverseStringInPlace(char *str)
 char* reverseString(const char* str) 
 {
     char* result = duplicateString(str);
-    printf("duplicate result: %s", result);
-    printf("\n");
-    reverseString(result);
+    reverseStringInPlace(result);
     return result;
 }
 

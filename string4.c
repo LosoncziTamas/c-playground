@@ -15,25 +15,20 @@ size_t stringLength(const char *str)
 char *duplicateString(const char *src, size_t len)
 {
     char *result = malloc((len + 1) * sizeof(char));
-    // fix underflow here
-    while (len--)
-    {
-        *(++result) = *(++src);
+    char *start = result;
+    for(int i = 0; i < len; ++i) {
+        *(start++) = *(src++);
     }
     result[len] = '\0';
-    // return front, not the end
     return result;
 }
 
-int main(void)
+char* trimString(const char* str) 
 {
-    const char *str = "  This is a string. ";
     size_t len = stringLength(str);
-
-    char *copy = duplicateString(str, len);
-
     size_t startSpaceCount = 0;
     const char *start = str;
+
     while (isspace(*(start++)))
     {
         ++startSpaceCount;
@@ -45,5 +40,17 @@ int main(void)
         ++endSpaceCount;
     }
 
+    char *result = duplicateString(str + startSpaceCount, len - (startSpaceCount + endSpaceCount));
+    return result;
+}
+
+int main(void)
+{
+    const char *str = " This is a string. ";
+    printf("%s \n", str);
+    char *trimmedStr = trimString(str);
+    printf("%s \n", trimmedStr);
+    
+    free(trimmedStr);
     return 0;
 }
