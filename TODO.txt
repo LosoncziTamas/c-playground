@@ -4,4 +4,5 @@
 - linked list
 - 3rd party abstraction
 - memory
-- string utilities (concat, reverse, find, lovercase, uppercase, trim)
+- reading params from terminal
+- string utilities (concat, reverse, find, lowercase, uppercase, trim, substring)
