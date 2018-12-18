@@ -6,11 +6,9 @@ char* substr(const char* str, unsigned int start, unsigned int end) {
     assert(start < end);
     size_t len = end - start;
     char* result = malloc((len + 1) * sizeof(char));
-
     for(unsigned int resultIndex = 0, sourceIndex = start; resultIndex < len; ++resultIndex, ++sourceIndex) {
         result[resultIndex] = str[sourceIndex];
     }
-
     result[len] = '\0';
     return result;
 }
