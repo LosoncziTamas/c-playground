@@ -1,8 +1,11 @@
 - threading
+- vararg
+- macros
+- error handling
 - file i/o
 - hashmap
 - linked list
-- 3rd party abstraction
+- wrappers around standard functions & utilities
 - memory
 - reading params from terminal
 - string utilities (concat, reverse, find, lowercase, uppercase, trim, substring)
