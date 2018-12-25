@@ -12,6 +12,22 @@ void* safeMalloc(size_t len)
     return result;
 }
 
+void* reallocIntArray(int** ptr, size_t len) 
+{
+    printf("Address of original: %p \n", *ptr);
+    void* result = realloc(*ptr, sizeof(*ptr) * len);
+    printf("Address of reallocated: %p \n", result);
+
+    // If there is not enough memory, the old memory block is not freed and null pointer is returned.
+    if (!result)
+    {
+        // The original pointer remains valid.
+        free(ptr);
+        exit(1);
+    }
+    return result;
+}
+
 int main(void) {
 
     const size_t arraySize = 16;
@@ -25,19 +41,12 @@ int main(void) {
     puts("\n");
 
     const size_t newSize = 32;
-    int* result = realloc(array, sizeof(int) * newSize);
-    // If there is not enough memory, the old memory block is not freed and null pointer is returned.
-    if (!result)
-    {
-        // The original pointer remains valid.
-        result = array;
-        puts("Realloc failed\n");
-    }
+    int* result = reallocIntArray(&array, newSize);
 
     for(int i = 0; i < newSize; ++i) 
     {
-        array[i] = i;
-        printf("%d", i);
+        result[i] = i;
+        printf("%d", result[i]);
     }
     puts("\n");
     free(result);
