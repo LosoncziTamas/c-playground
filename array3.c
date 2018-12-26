@@ -20,7 +20,6 @@ void printArray(int* array, size_t count)
     printf("\n");
 }
 
-// Can I assign heap allocated memory to a stack array?
 void assignToArray(int** array, size_t count)
 {
     int* tmp = malloc(sizeof(*array) * count);
@@ -28,6 +27,7 @@ void assignToArray(int** array, size_t count)
     {
         tmp[i] = 5;
     }
+    free(*array);
     *array = tmp;
     printf("\n");
 }
@@ -42,6 +42,6 @@ int main(void)
     printArray(array, count);
     assignToArray(&array, count);
     printArray(array, count);
-
+    free(array);
     return 0;
 }

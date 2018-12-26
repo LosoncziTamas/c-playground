@@ -14,7 +14,7 @@
         {
             "label": "launch",
             "type": "shell",
-            "command": "./${fileBasenameNoExtension}.out "
+            "command": "./${fileBasenameNoExtension}.out"
         },
         {
             "label": "clean",
