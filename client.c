@@ -1,16 +1,28 @@
 #include <stdlib.h>
+#include <stdio.h>
+#include <errno.h>
+#include <assert.h>
+#include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <assert.h>
 #include <unistd.h>
 
-int main() {
+void checkError(const int result)
+{
+    if (result == -1)
+    {
+        perror("The following error occurred");
+        exit(1);
+    }
+}
 
+int main() 
+{
     // Creates an IPv4 TCP socket.
     int fd = socket(AF_INET, SOCK_STREAM, PF_UNSPEC);
-    assert(fd != -1);
+    checkError(fd);
 
     // Setup server protocol, address, portnumber.
 	struct sockaddr_in serverAddress = {0};
@@ -20,12 +32,16 @@ int main() {
     serverAddress.sin_port = htons(2045);
 
     int result = connect(fd, (struct sockaddr *) &serverAddress, sizeof(serverAddress));
-    assert(result != -1);
+    checkError(result);
 
-    char buff[256];
-    // Receive data in buffer.
-    size_t len = recv(fd, buff, 255, 0);
-    buff[255] = '\0';
+    char* message = "Hello from client";
+    ssize_t bytesSent = send(fd, message, strlen(message), 0);
+    checkError(bytesSent);
+
+    char buffer[256];
+    ssize_t bytesRead = read(fd, buffer, 256);
+    checkError(bytesRead);
+    puts(buffer);
 
     close(fd);
 
