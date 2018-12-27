@@ -47,7 +47,7 @@ int main()
     puts(buffer);
 
     char* message = "Hello from server";
-    ssize_t bytesSent = send(client, message, strlen(message), 0);
+    ssize_t bytesSent = send(client, message, strlen(message) + 1, 0);
     checkError(bytesSent);
 
     return 0;

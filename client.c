@@ -35,7 +35,7 @@ int main()
     checkError(result);
 
     char* message = "Hello from client";
-    ssize_t bytesSent = send(fd, message, strlen(message), 0);
+    ssize_t bytesSent = send(fd, message, strlen(message) + 1, 0);
     checkError(bytesSent);
 
     char buffer[256];
