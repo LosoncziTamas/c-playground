@@ -5,7 +5,7 @@
             "label": "build",
             "type": "shell",
             "command": "cc",
-            "args": ["${file}", "-o", "${fileBasenameNoExtension}.out", "-g"],
+            "args": ["${file}", "-o", "${fileDirname}/${fileBasenameNoExtension}.out", "-g"],
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -14,13 +14,13 @@
         {
             "label": "launch",
             "type": "shell",
-            "command": "./${fileBasenameNoExtension}.out"
+            "command": "${fileDirname}/${fileBasenameNoExtension}.out"
         },
         {
             "label": "clean",
             "type": "shell",
             "command": "rm",
-            "args": ["-r", "*.out", "*.dSYM"]
+            "args": ["-r", "${fileDirname}/*.out", "${fileDirname}/*.dSYM"]
         }
     ]
 }
