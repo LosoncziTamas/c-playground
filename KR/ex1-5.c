@@ -8,12 +8,13 @@
 
 int main()
 {
-    float fahr = LOWER;
-    while(fahr <= UPPER)
+    float fahr = UPPER;
+
+    while(fahr >= LOWER)
     {
         float celsius = (5.0f / 9.0f) * (fahr - 32);
         printf("%3.0f %6.1f\n", fahr, celsius);
-        fahr += STEP;
+        fahr -= STEP;
     }
 
     return 0;
