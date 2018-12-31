@@ -4,7 +4,7 @@
 #define UPPER 300
 #define STEP 20
 
-/* Fahrenheit-Celsius table 0 - 300 */
+/* Fahrenheit-Celsius table 300 - 0 */
 
 int main()
 {
