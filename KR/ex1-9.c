@@ -7,18 +7,17 @@
     
 bool isBlank(int c)
 {
-    return c == ' ' || c == '\n' || c == '\t';
+    return c == ' ' ||c == '\t';
 }
 
 int main(void)
 {
     int blankCount = 0;
-    int oldChar = -1;
     for (int c = getchar(); c != EOF; c = getchar())
     {
-        if (isBlank(c) && isBlank(oldChar))
+        if (isBlank(c))
         {
-            ++blankCount;
+            ++blankCount;   
         }
         else
         {
@@ -26,13 +25,9 @@ int main(void)
             {
                 putchar(' ');
             }
-            else
-            {
-                putchar(c);
-            }
+            putchar(c);
             blankCount = 0;
         }
-        oldChar = c;
     }
     return 0;
 }
