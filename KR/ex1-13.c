@@ -13,19 +13,27 @@ int main(void)
     int wordLen = 0;
     for (int c = getchar(); c != EOF; c = getchar())
     {
-        if (c == ' ' || c == '\t' || c == '\n')
+        if (c == ' ' || c == '\t')
         {
             inWord = false;
         }
         else
         {
-            if (!inWord)
+            if (!inWord || c == '\n')
             {
-                printf("\t%d\n", wordLen);
+                putchar('\t');
+                for(int i = 0; i < wordLen; ++i)
+                {
+                    putchar('-');
+                }
+                putchar('\n');
                 wordLen = 0;
             }
-            putchar(c);
-            ++wordLen;
+            if (c != '\n')
+            {
+                ++wordLen;
+                putchar(c);
+            }
             inWord = true;
         }
     }
