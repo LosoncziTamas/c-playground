@@ -7,22 +7,18 @@
 
 int main(void)
 {
-    int charCount[256] = {0};
+    //TODO: non-ascii support
+    int charCount[128] = {0};
     for (int c = getchar(); c != EOF; c = getchar())
     {
-        char asChar = c;
-        printf("%c ", asChar);
-        charCount[asChar]++; 
-        printf("%d \n", charCount[asChar]);
-
+        charCount[c]++; 
     }
-    for (int i = 0; i < 256; ++i)
+    for (int i = 0; i < 128; ++i)
     {
-        char asChar = i;
-        if (charCount[asChar] != 0)
+        if (charCount[i] != 0)
         {
-            printf("%c\t", asChar);
-            for (int j = 0; j < charCount[asChar]; ++j)
+            printf("%c\t", i);
+            for (int j = 0; j < charCount[i]; ++j)
             {
                 putchar('-');
             }
