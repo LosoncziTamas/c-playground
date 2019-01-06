@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#define MAXLINE 5 
+#define MAXLINE 1000
 
 /*  Revise the main routine of
     the longest-line program 
@@ -10,31 +10,37 @@
     long input lines, and as
     much as possible of the text. */
 
-
 int getLine(char line[], int maxline)
 {
-    int i, c;
-    for(i = 0, c = getchar(); c != EOF && c != '\n'; c = getchar())
+    int storedIndex, realIndex, c;
+    bool overflow = false;
+
+    for(storedIndex = 0, realIndex = 0, c = getchar(); c != EOF && c != '\n'; c = getchar())
     {
-        // end of line, buffer is not full
-        if (c == '\n' && i < maxline)
+        if (storedIndex < maxline - 1)
         {
-            line[i] = '\n';
-            line[i + 1] = '\0';
+            line[storedIndex] = c;
+            ++storedIndex;
         } 
-        // end of line, buffer is full
-        else if (c == '\n' && i >= maxline)
+        else
         {
-            line[maxline - 1] = '\n';
-            line[maxline] = '\0';
+            overflow = true;
         }
-        else if (i < maxline)
-        {
-            line[i] = c;
-        }
-        ++i;
+        ++realIndex;
     }
-    return i;
+    if (overflow)
+    {
+        line[maxline - 2] = '\n';
+        line[maxline - 1] = '\0';
+        ++realIndex;
+    } 
+    else if (c == '\n')
+    {
+        line[storedIndex] = '\n';
+        line[storedIndex + 1] = '\0';
+        ++realIndex;
+    }
+    return realIndex;
 }
 
 void copy(char to[], char from[])
@@ -56,6 +62,6 @@ int main(void)
             copy(longest, line);
         }
     }
-    printf("length: %d %s", len, longest);
+    printf("length: %d %s", max, longest);
     return 0;
 }
