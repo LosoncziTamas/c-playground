@@ -8,11 +8,10 @@
     parameter? */
 
 #define TAB_WIDTH 8
+#define COLUMN_COUNT 5
 
 int main()
-{
-    int tabStops = 5;
-    
+{    
     for (int c = getchar(), charCount = 0; c != EOF; c = getchar())
     {
         if (c == '\t')
@@ -28,6 +27,11 @@ int main()
         {
             putchar(c);
             ++charCount;
+        }
+        if (charCount >= COLUMN_COUNT * TAB_WIDTH)
+        {
+            putchar('\n');
+            charCount = 0;
         }
     }
 
