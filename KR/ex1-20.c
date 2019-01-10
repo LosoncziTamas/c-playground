@@ -12,6 +12,7 @@
 
 int main()
 {    
+
     for (int c = getchar(), charCount = 0; c != EOF; c = getchar())
     {
         if (c == '\t')
@@ -28,9 +29,8 @@ int main()
             putchar(c);
             ++charCount;
         }
-        if (charCount >= COLUMN_COUNT * TAB_WIDTH)
+        if (c == '\n')
         {
-            putchar('\n');
             charCount = 0;
         }
     }
