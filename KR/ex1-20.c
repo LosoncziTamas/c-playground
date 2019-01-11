@@ -17,11 +17,19 @@ int main()
     {
         if (c == '\t')
         {
-            int space = TAB_WIDTH - (charCount % TAB_WIDTH);
-            for(int i = 0; i < space; ++i)
+            if (charCount + TAB_WIDTH > TAB_WIDTH * COLUMN_COUNT)
             {
-                putchar(' ');
-                ++charCount;
+                putchar('\n');
+                charCount = 0;
+            }
+            else
+            {
+                int space = TAB_WIDTH - (charCount % TAB_WIDTH);
+                for(int i = 0; i < space; ++i)
+                {
+                    putchar(' ');
+                    ++charCount;
+                }
             }
         }
         else
