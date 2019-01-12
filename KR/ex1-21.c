@@ -12,37 +12,44 @@
 #define TAB_WIDTH 8
 #define COLUMN_COUNT 5
 
+void printBlanksOptimally(int tabCount, int spaceCount)
+{
+    /*int tabCount = blankCount / TAB_WIDTH;
+    int spaceCount = blankCount % TAB_WIDTH;
+
+    for (int i = 0; i < tabCount; ++i)
+    {
+        putchar('\t');
+    }*/
+    // tab at most is TAB_WIDTH long
+    for (int i = 0; i < (tabCount * TAB_WIDTH) + spaceCount; ++i)
+    {
+        putchar(' ');
+    }
+}
+
 int main(void)
 {
-    for(int c = getchar(), blankCount = 0; c != EOF; c = getchar())
+    for(int c = getchar(), tabCount = 0, spaceCount = 0, charCount = 0; c != EOF; c = getchar())
     {
         if (c == ' ')
         {
-            blankCount++;
+            spaceCount++;
         }
         else if (c == '\t')
         {
-            blankCount += TAB_WIDTH;
+            tabCount++;
         }
         else
         {
-            if (blankCount != 0)
+            if (tabCount + spaceCount > 0)
             {
-                int tabCount = blankCount / TAB_WIDTH;
-                int spaceCount = blankCount % TAB_WIDTH;
-                for (int i = 0; i < tabCount; ++i)
-                {
-                    putchar('\t');
-                }
-                for (int i = 0; i < spaceCount; ++i)
-                {
-                    putchar(' ');
-                }
-                blankCount = 0;
+                printBlanksOptimally(tabCount, spaceCount);
+                tabCount = spaceCount = 0;
             } 
             putchar(c);
+            charCount++;
         }
-
     }
     return 0;
 }
