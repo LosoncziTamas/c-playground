@@ -11,19 +11,26 @@
 
 #define TAB_WIDTH 8
 #define COLUMN_COUNT 5
- 
 
-void printBlanksOptimally(int blankCount, int charCount)
+void printBlanksOptimally(int blankCount, int charPerLine)
 {
-    /*int tabCount = blankCount / TAB_WIDTH;
+    int toNextStop = TAB_WIDTH - ((charPerLine - blankCount) % TAB_WIDTH);
+    
+    // move to next tab stop
+    if (blankCount >= toNextStop)
+    {
+        putchar('\t');
+        blankCount -= toNextStop;
+    }
+
+    int tabCount = blankCount / TAB_WIDTH;
     int spaceCount = blankCount % TAB_WIDTH;
 
     for (int i = 0; i < tabCount; ++i)
     {
         putchar('\t');
-    }*/
-    // tab at most is TAB_WIDTH long
-    for (int i = 0; i < blankCount; ++i)
+    }
+    for (int i = 0; i < spaceCount; ++i)
     {
         putchar(' ');
     }
@@ -31,28 +38,28 @@ void printBlanksOptimally(int blankCount, int charCount)
 
 int main(void)
 {
-    for(int c = getchar(), blankCount = 0, charCount = 0; c != EOF; c = getchar())
+    for(int c = getchar(), blankCount = 0, charPerLine = 0; c != EOF; c = getchar())
     {
         if (c == ' ')
         {
             blankCount++;
+            charPerLine++;
         }
         else if (c == '\t')
         {
-            int nextStop = TAB_WIDTH - ((charCount + blankCount) % TAB_WIDTH);
-            blankCount += nextStop;
-            //printf("\n charCount %d blankCount %d \n", charCount, blankCount);
+            int toNextStop = TAB_WIDTH - (charPerLine % TAB_WIDTH);
+            blankCount += toNextStop;
+            charPerLine += toNextStop;
         }
         else
         {
             if (blankCount > 0)
             {
-                printBlanksOptimally(blankCount, charCount);
-                charCount += blankCount;
+                printBlanksOptimally(blankCount, charPerLine);
                 blankCount = 0;
             }
-            charCount = c == '\n' ? 0 : charCount + 1;
             putchar(c);
+            charPerLine = c == '\n' ? 0 : charPerLine + 1;
         }
     }
     return 0;
