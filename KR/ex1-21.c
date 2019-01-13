@@ -11,8 +11,9 @@
 
 #define TAB_WIDTH 8
 #define COLUMN_COUNT 5
+ 
 
-void printBlanksOptimally(int tabCount, int spaceCount)
+void printBlanksOptimally(int blankCount, int charCount)
 {
     /*int tabCount = blankCount / TAB_WIDTH;
     int spaceCount = blankCount % TAB_WIDTH;
@@ -22,7 +23,7 @@ void printBlanksOptimally(int tabCount, int spaceCount)
         putchar('\t');
     }*/
     // tab at most is TAB_WIDTH long
-    for (int i = 0; i < (tabCount * TAB_WIDTH) + spaceCount; ++i)
+    for (int i = 0; i < blankCount; ++i)
     {
         putchar(' ');
     }
@@ -30,25 +31,28 @@ void printBlanksOptimally(int tabCount, int spaceCount)
 
 int main(void)
 {
-    for(int c = getchar(), tabCount = 0, spaceCount = 0, charCount = 0; c != EOF; c = getchar())
+    for(int c = getchar(), blankCount = 0, charCount = 0; c != EOF; c = getchar())
     {
         if (c == ' ')
         {
-            spaceCount++;
+            blankCount++;
         }
         else if (c == '\t')
         {
-            tabCount++;
+            int nextStop = TAB_WIDTH - ((charCount + blankCount) % TAB_WIDTH);
+            blankCount += nextStop;
+            //printf("\n charCount %d blankCount %d \n", charCount, blankCount);
         }
         else
         {
-            if (tabCount + spaceCount > 0)
+            if (blankCount > 0)
             {
-                printBlanksOptimally(tabCount, spaceCount);
-                tabCount = spaceCount = 0;
-            } 
+                printBlanksOptimally(blankCount, charCount);
+                charCount += blankCount;
+                blankCount = 0;
+            }
+            charCount = c == '\n' ? 0 : charCount + 1;
             putchar(c);
-            charCount++;
         }
     }
     return 0;
