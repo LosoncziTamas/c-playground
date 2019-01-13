@@ -12,10 +12,10 @@
 #define TAB_WIDTH 8
 #define COLUMN_COUNT 5
 
-void printBlanksOptimally(int blankCount, int charPerLine)
+void printBlanksOptimally(int blankCount, int blankStart)
 {
-    int toNextStop = TAB_WIDTH - ((charPerLine - blankCount) % TAB_WIDTH);
-    
+    int toNextStop = TAB_WIDTH - (blankStart % TAB_WIDTH);
+
     // move to next tab stop
     if (blankCount >= toNextStop)
     {
@@ -55,7 +55,7 @@ int main(void)
         {
             if (blankCount > 0)
             {
-                printBlanksOptimally(blankCount, charPerLine);
+                printBlanksOptimally(blankCount, charPerLine - blankCount);
                 blankCount = 0;
             }
             putchar(c);
