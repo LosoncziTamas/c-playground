@@ -15,8 +15,30 @@
     // if limit is not over and new line, then print the array and clear variables
     // if there are no blanks and limits is over, then split
 
+#define MAX_LENGTH 32
+
 int main(void)
 {
+    char line[MAX_LENGTH] = {0};
+    for(int c = getchar(), charIndex = 0, lastBlankIndex = 0; c != EOF; c = getchar())
+    {
+        if (charIndex < MAX_LENGTH)
+        {
+            if (c == ' ' || c == '\t')
+            {
+                // tab takes more space
+                lastBlankIndex = charIndex;
+            }
+            else
+            {
 
+            }
+        }
+        else
+        {
+
+        }
+        charIndex++;
+    }
     return 0;
 }
