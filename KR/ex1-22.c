@@ -16,7 +16,16 @@
 // if limit is not over and new line, then print the array and clear variables
 // if there are no blanks and limits is over, then split
 
-#define MAX_LENGTH 32
+#define MAX_LENGTH 5
+
+void flushLine(char line[], int charIndex)
+{
+    for (int i = 0; i < charIndex; ++i)
+    {
+        putchar(line[i]);
+        line[i] = 0;
+    }
+}
 
 int main(void)
 {
@@ -25,34 +34,40 @@ int main(void)
     {
         if (charIndex < MAX_LENGTH - 1)
         {
-            if (c == ' ' || c == '\t')
+            if (c == '\n')
             {
-                // tab takes more space, fix later
-                lastBlankIndex = charIndex;
-            }
-            line[charIndex] = c;
-            charIndex++;
-        }
-        else
-        {
-            if (lastBlankIndex == 0)
-            {
-                for (int i = 0; i < charIndex; ++i)
-                {
-                    putchar(line[i]);
-                    line[i] = 0;
-                }
-                //line split marker
-                putchar('-');
+                flushLine(line, charIndex);
+                putchar(c);
                 charIndex = 0;
             }
             else
             {
-                for (int i = 0; i < lastBlankIndex; ++i)
+                //TODO: fix
+                if (c == ' ' || c == '\t')
                 {
-                    putchar(line[i]);
-                    line[i] = 0;
+                    // tab takes more space, fix later
+                    lastBlankIndex = charIndex;
                 }
+                line[charIndex] = c;
+                charIndex++;
+            }
+        }
+        else
+        {
+            if (lastBlankIndex == 0)
+            {   
+                flushLine(line, charIndex);
+                putchar(c);
+                // not terminated
+                if (c != '\n')
+                {
+                    putchar('-');
+                }
+                charIndex = 0;
+            }
+            else
+            {
+                flushLine(line, lastBlankIndex);
                 //copy remainder
                 int remainderLen = charIndex - lastBlankIndex;
                 for (int i = 0; i < remainderLen; ++i)
