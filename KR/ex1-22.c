@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdbool.h>
 #include <string.h>
 
 /*  Write a program to "fold" long input lines
@@ -27,11 +28,23 @@ void flushLine(char line[], int charIndex)
     }
 }
 
+int movePieceToFront(char line[], int start, int end)
+{
+    int len = end - start;
+    for (int i = 0; i < len; ++i)
+    {
+        line[i] = line[start + i];
+        line[start + i] = 0;
+    }
+    return len;
+}
+
 int main(void)
 {
     char line[MAX_LENGTH] = {0};
     for (int c = getchar(), charIndex = 0, lastBlankIndex = 0; c != EOF; c = getchar())
     {
+        bool isBlank = c == ' ' || c == '\t';
         if (charIndex < MAX_LENGTH - 1)
         {
             if (c == '\n')
@@ -42,8 +55,13 @@ int main(void)
             }
             else
             {
-                //TODO: fix
-                if (c == ' ' || c == '\t')
+                bool skipFirst = charIndex == 0 && isBlank;
+                if (skipFirst)
+                {
+                    charIndex++;
+                    continue;
+                }
+                if (isBlank)
                 {
                     // tab takes more space, fix later
                     lastBlankIndex = charIndex;
@@ -54,8 +72,20 @@ int main(void)
         }
         else
         {
-            if (lastBlankIndex == 0)
+            if (isBlank)
+            {
+                flushLine(line, charIndex);
+                charIndex = 0;
+                lastBlankIndex = 0;
+            } 
+            else if (lastBlankIndex != 0)
             {   
+                //TODO: fix
+                flushLine(line, lastBlankIndex + 1);
+                charIndex = movePieceToFront(line, lastBlankIndex + 1, charIndex);
+            }
+            else
+            {
                 flushLine(line, charIndex);
                 putchar(c);
                 // not terminated
@@ -64,18 +94,6 @@ int main(void)
                     putchar('-');
                 }
                 charIndex = 0;
-            }
-            else
-            {
-                flushLine(line, lastBlankIndex);
-                //copy remainder
-                int remainderLen = charIndex - lastBlankIndex;
-                for (int i = 0; i < remainderLen; ++i)
-                {
-                    line[i] = line[charIndex + i];
-                    line[charIndex + i] = 0;
-                }
-                charIndex = remainderLen - 1;
             }
             putchar('\n');
         }
