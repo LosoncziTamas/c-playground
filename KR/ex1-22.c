@@ -10,18 +10,11 @@
     very long lines, and if there are no blanks
      or tabs before the specified column. */
 
-// read til EOF
-// count & store chars in array (n-sized)
-// keep track of last blank & check limit
-// if limit is over then print until the last blank (excluding it), print new line & move the remainder, update variables
-// if limit is not over and new line, then print the array and clear variables
-// if there are no blanks and limits is over, then split
-
 #define MAX_LENGTH 5
 
-void flushLine(char line[], int charIndex)
+void flushLine(char line[], int size)
 {
-    for (int i = 0; i < charIndex; ++i)
+    for (int i = 0; i < size; ++i)
     {
         putchar(line[i]);
         line[i] = 0;
@@ -76,13 +69,13 @@ int main(void)
             {
                 flushLine(line, charIndex);
                 charIndex = 0;
-                lastBlankIndex = 0;
             } 
             else if (lastBlankIndex != 0)
             {   
-                //TODO: fix
                 flushLine(line, lastBlankIndex + 1);
-                charIndex = movePieceToFront(line, lastBlankIndex + 1, charIndex);
+                int pieceLen = movePieceToFront(line, lastBlankIndex + 1, charIndex);
+                line[pieceLen] = c;
+                charIndex = pieceLen + 1;
             }
             else
             {
@@ -95,6 +88,7 @@ int main(void)
                 }
                 charIndex = 0;
             }
+            lastBlankIndex = 0;
             putchar('\n');
         }
     }
