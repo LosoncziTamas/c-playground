@@ -1,5 +1,5 @@
 #include <stdio.h>
-
+#include <stdbool.h>
 /*
     Write a program to remove all
     comments from a C program. 
@@ -19,6 +19,14 @@
 
 int main(void)
 {
-    
+
+    bool inQuote = false;
+    for (int c = getchar(); c != EOF; c = getchar())
+    {
+        if (c == '"')
+        {
+            inQuote = !inQuote;
+        }
+    }
     return 0;
 }
