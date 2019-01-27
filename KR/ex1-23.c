@@ -62,5 +62,6 @@ int main(void)
         lastChar = c;
     }
     putchar(lastChar);
+    
     return 0;
 }
