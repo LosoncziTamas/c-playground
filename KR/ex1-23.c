@@ -13,8 +13,9 @@ int main(void)
     bool inQuote = false;
     bool inLineComment = false;
     bool inBlockComment = false;
+    char lastChar = 0;
 
-    for (int c = getchar(), lastChar = 0; c != EOF; c = getchar())
+    for (int c = getchar(); c != EOF; c = getchar())
     {
         if (c == '"')
         {
@@ -38,6 +39,8 @@ int main(void)
             if (c == '\n')
             {
                 inLineComment = false;
+                lastChar = 0;
+                continue;
             }
         }
         else if (inBlockComment)
@@ -45,14 +48,19 @@ int main(void)
             if (lastChar == '*' && c == '/')
             {
                 inBlockComment = false;
+                lastChar = 0;
+                continue;
             }
         }
         else 
         {
-            putchar(c);
+            if (lastChar != 0)
+            {
+                putchar(lastChar);
+            }
         }
         lastChar = c;
     }
-
+    putchar(lastChar);
     return 0;
 }

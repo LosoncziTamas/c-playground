@@ -1,8 +1,8 @@
 #include <stdio.h>
 
-/
 
-/
+
+
 #define CONST 12
 
 int main()
@@ -14,14 +14,14 @@ int main()
         char* var2 = "*/";
         char* var3 = "// asdasd";
 
-        /
+        
         char c = '/';
         if ( i % 2 == 0)
         {
-            /            /
+                        
             continue;
         }
     }
 }
 
-/
+ 
