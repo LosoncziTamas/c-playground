@@ -27,6 +27,6 @@ int main()
             continue;
         }
     }
-
+}
 
 // Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris faucibus neque porttitor diam bibendum blandit. Fusce venenatis neque sit amet arcu ullamcorper maximus. Suspendisse efficitur pellentesque tellus, nec sodales ipsum ultricies in. Quisque ornare turpis et mi mollis, eget pellentesque erat suscipit. 
