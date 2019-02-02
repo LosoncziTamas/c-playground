@@ -17,7 +17,7 @@ int main()
 
         // some other comment */ asdad// asdasd
 
-        char c = '/';
+        char c = '\\';
         if ( i % 2 == 0)
         {
             // comments

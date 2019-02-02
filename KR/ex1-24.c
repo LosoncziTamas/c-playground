@@ -48,6 +48,16 @@ int main(void)
     Syntax syntax = {0};
     for (int c = getchar(), lastChar = 0; c != EOF; c = getchar())
     {
+        //TODO: fix espace seq flaw
+        if (lastChar == '\\' || c == '\\')
+        {
+            setFlag(&syntax, ESCAPE_SEQ);
+        } 
+        else
+        {
+            clearFlag(&syntax, ESCAPE_SEQ);
+        }      
+
         if (!isSet(&syntax, BLOCK_COMMENT | DOUBLE_QUOTE | SINGLE_QUOTE))
         {
             if (lastChar == '/' && c == '/')
@@ -72,10 +82,11 @@ int main(void)
             }
         }
 
-        if (!isSet(&syntax, LINE_COMMENT | BLOCK_COMMENT | SINGLE_QUOTE))
+        if (!isSet(&syntax, LINE_COMMENT | BLOCK_COMMENT | SINGLE_QUOTE | ESCAPE_SEQ))
         {
             if (c == '\"')
             {
+                syntax.doubleQuoteCount++;
                 if (isSet(&syntax, DOUBLE_QUOTE))
                 {
                     clearFlag(&syntax, DOUBLE_QUOTE);
@@ -87,10 +98,11 @@ int main(void)
             }
         }
 
-        if (!isSet(&syntax, LINE_COMMENT | BLOCK_COMMENT | DOUBLE_QUOTE))
+        if (!isSet(&syntax, LINE_COMMENT | BLOCK_COMMENT | DOUBLE_QUOTE | ESCAPE_SEQ))
         {
             if (c == '\'')
             {
+                syntax.singleQuoteCount++;
                 if (isSet(&syntax, SINGLE_QUOTE))
                 {
                     clearFlag(&syntax, SINGLE_QUOTE);
@@ -102,7 +114,7 @@ int main(void)
             }
         }
 
-        if (!isSet(&syntax, LINE_COMMENT | BLOCK_COMMENT | DOUBLE_QUOTE | SINGLE_QUOTE))
+        if (!isSet(&syntax, LINE_COMMENT | BLOCK_COMMENT | DOUBLE_QUOTE | SINGLE_QUOTE | ESCAPE_SEQ))
         {
             switch (c)
             {
@@ -123,12 +135,6 @@ int main(void)
                 break;
             case '}':
                 syntax.braceBalance--;
-                break;
-            case '\'':
-                syntax.singleQuoteCount++;
-                break;
-            case '\"':
-                syntax.doubleQuoteCount++;
                 break;
             default:
                 break;
