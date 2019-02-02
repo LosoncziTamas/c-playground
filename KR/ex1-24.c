@@ -8,28 +8,25 @@
     both single and double, escape 
     sequences, and comments. */
 
-/*
-    Step 1: Read til EOF
-    Step 2: Check pairity of [], (), {}, '', "", \
-*/
-
 typedef struct Syntax
 {
     unsigned int flags;
+    int braceBalance;
+    int bracketBalance;
+    int parenthesesBalance;
+    int singleQuoteCount;
+    int doubleQuoteCount;
 } Syntax;
 
-typedef enum Flags
+enum EscapeFlags
 {
     NONE = 0,
-    BRACKET = (1 << 0),
-    PARENTHESES = (1 << 1),
-    BRACE = (1 << 2),
-    SINGLE_QUOTE = (1 << 3),
-    DOUBLE_QUOTE = (1 << 4),
-    ESCAPE_SEQ = (1 << 5),
-    LINE_COMMENT = (1 << 6),
-    BLOCK_COMMENT = (1 << 7)
-} Flags;
+    SINGLE_QUOTE = (1 << 0),
+    DOUBLE_QUOTE = (1 << 1),
+    ESCAPE_SEQ = (1 << 2),
+    LINE_COMMENT = (1 << 3),
+    BLOCK_COMMENT = (1 << 4)
+};
 
 void setFlag(Syntax *syntax, unsigned int flag)
 {
@@ -51,118 +48,117 @@ int main(void)
     Syntax syntax = {0};
     for (int c = getchar(), lastChar = 0; c != EOF; c = getchar())
     {
-        // check for escaping chars
-        if (lastChar == '/' && c == '/')
+        if (!isSet(&syntax, BLOCK_COMMENT | DOUBLE_QUOTE | SINGLE_QUOTE))
         {
-            setFlag(&syntax, LINE_COMMENT);
-        } 
-        else if (c == '\n')
-        {
-            clearFlag(&syntax, LINE_COMMENT);
+            if (lastChar == '/' && c == '/')
+            {
+                setFlag(&syntax, LINE_COMMENT);
+            } 
+            else if (c == '\n')
+            {
+                clearFlag(&syntax, LINE_COMMENT);
+            }
         }
 
-
-        lastChar = c;
-    }
-    return 0;
-}
-
-
-int oldmain(void)
-{
-    int bracketCount = 0;
-    int parenthesesCount = 0;
-    int braceCount = 0;
-    int singleQuoteCount = 0;
-    int doubleQuoteCount = 0;
-    int blockCommentCount = 0;
-    int lastChar = 0;
-    bool inLineComment = false;
-
-    for (int c = getchar(); c != EOF; c = getchar())
-    {
-        if (lastChar == '/' && c == '/')
+        if (!isSet(&syntax, LINE_COMMENT | DOUBLE_QUOTE | SINGLE_QUOTE))
         {
-            inLineComment = true;
-        } 
-        else if (c == '\n')
-        {
-            inLineComment = false;
+            if (lastChar == '/' && c == '*')
+            {
+                setFlag(&syntax, BLOCK_COMMENT);
+            }
+            else if (lastChar == '*' && c == '/')
+            {
+                clearFlag(&syntax, BLOCK_COMMENT);
+            }
         }
 
-        bool inQuote = doubleQuoteCount % 2;
-
-        if (inQuote || inLineComment)
+        if (!isSet(&syntax, LINE_COMMENT | BLOCK_COMMENT | SINGLE_QUOTE))
         {
-            lastChar = c;
-            continue;
+            if (c == '\"')
+            {
+                if (isSet(&syntax, DOUBLE_QUOTE))
+                {
+                    clearFlag(&syntax, DOUBLE_QUOTE);
+                }
+                else
+                {
+                    setFlag(&syntax, DOUBLE_QUOTE);
+                }
+            }
         }
 
-        switch (c)
+        if (!isSet(&syntax, LINE_COMMENT | BLOCK_COMMENT | DOUBLE_QUOTE))
         {
+            if (c == '\'')
+            {
+                if (isSet(&syntax, SINGLE_QUOTE))
+                {
+                    clearFlag(&syntax, SINGLE_QUOTE);
+                }
+                else
+                {
+                    setFlag(&syntax, SINGLE_QUOTE);
+                }
+            }
+        }
+
+        if (!isSet(&syntax, LINE_COMMENT | BLOCK_COMMENT | DOUBLE_QUOTE | SINGLE_QUOTE))
+        {
+            switch (c)
+            {
             case '[':
-                bracketCount++;
+                syntax.bracketBalance++;
                 break;
             case ']':
-                bracketCount--;
+                syntax.bracketBalance--;
                 break;
             case '(':
-                parenthesesCount++;
+                syntax.parenthesesBalance++;
                 break;
             case ')':
-                parenthesesCount--;
+                syntax.parenthesesBalance--;
                 break;
             case '{':
-                braceCount++;
+                syntax.braceBalance++;
                 break;
             case '}':
-                braceCount--;
+                syntax.braceBalance--;
                 break;
             case '\'':
-                singleQuoteCount++;
+                syntax.singleQuoteCount++;
                 break;
             case '\"':
-                doubleQuoteCount++;
+                syntax.doubleQuoteCount++;
                 break;
             default:
                 break;
+            }
         }
-
-        if (lastChar == '/' && c == '*' && !inQuote && !inLineComment)
-        {
-            blockCommentCount++;
-        }
-        else if (lastChar == '*' && c == '/' && !inQuote && !inLineComment)
-        {
-            blockCommentCount--;
-        }
-
-        //TODO: check escape sequences
 
         lastChar = c;
     }
 
-    if (bracketCount)
+    if (syntax.bracketBalance)
     {
         puts("Unbalanced brackets.");
     }
-    if (parenthesesCount)
+    if (syntax.parenthesesBalance)
     {
         puts("Unbalanced parentheses.");
     }
-    if (braceCount)
+    if (syntax.braceBalance)
     {
         puts("Unbalanced braces.");
     }
-    if (singleQuoteCount % 2)
+    if (syntax.singleQuoteCount % 2)
     {
         puts("Unbalanced single quote.");
     }
-    if (doubleQuoteCount % 2)
+    if (syntax.doubleQuoteCount % 2)
     {
         puts("Unbalanced double quote.");
     }
-    if (blockCommentCount)
+    if (isSet(&syntax, BLOCK_COMMENT))
     {
         puts("Unbalanced comment block.");
     }
