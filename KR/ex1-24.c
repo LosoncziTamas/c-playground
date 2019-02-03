@@ -48,15 +48,29 @@ int main(void)
     Syntax syntax = {0};
     for (int c = getchar(), lastChar = 0; c != EOF; c = getchar())
     {
-        //TODO: fix espace seq flaw
-        if (lastChar == '\\' || c == '\\')
+        if (c == '\\')
         {
-            setFlag(&syntax, ESCAPE_SEQ);
-        } 
+            if (isSet(&syntax, ESCAPE_SEQ))
+            {
+                lastChar = c;
+                clearFlag(&syntax, ESCAPE_SEQ);
+                continue;
+            }
+            else
+            {
+                setFlag(&syntax, ESCAPE_SEQ);
+            }
+        }
         else
         {
+            if (isSet(&syntax, ESCAPE_SEQ))
+            {
+                lastChar = c;
+                clearFlag(&syntax, ESCAPE_SEQ);
+                continue;
+            }
             clearFlag(&syntax, ESCAPE_SEQ);
-        }      
+        }
 
         if (!isSet(&syntax, BLOCK_COMMENT | DOUBLE_QUOTE | SINGLE_QUOTE))
         {
@@ -82,7 +96,7 @@ int main(void)
             }
         }
 
-        if (!isSet(&syntax, LINE_COMMENT | BLOCK_COMMENT | SINGLE_QUOTE | ESCAPE_SEQ))
+        if (!isSet(&syntax, LINE_COMMENT | BLOCK_COMMENT | SINGLE_QUOTE))
         {
             if (c == '\"')
             {
@@ -98,7 +112,7 @@ int main(void)
             }
         }
 
-        if (!isSet(&syntax, LINE_COMMENT | BLOCK_COMMENT | DOUBLE_QUOTE | ESCAPE_SEQ))
+        if (!isSet(&syntax, LINE_COMMENT | BLOCK_COMMENT | DOUBLE_QUOTE))
         {
             if (c == '\'')
             {
@@ -114,7 +128,7 @@ int main(void)
             }
         }
 
-        if (!isSet(&syntax, LINE_COMMENT | BLOCK_COMMENT | DOUBLE_QUOTE | SINGLE_QUOTE | ESCAPE_SEQ))
+        if (!isSet(&syntax, LINE_COMMENT | BLOCK_COMMENT | DOUBLE_QUOTE | SINGLE_QUOTE))
         {
             switch (c)
             {
