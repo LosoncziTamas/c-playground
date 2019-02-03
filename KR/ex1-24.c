@@ -48,27 +48,18 @@ int main(void)
     Syntax syntax = {0};
     for (int c = getchar(), lastChar = 0; c != EOF; c = getchar())
     {
+        if (isSet(&syntax, ESCAPE_SEQ))
+        {
+            lastChar = c;
+            clearFlag(&syntax, ESCAPE_SEQ);
+            continue;
+        }
         if (c == '\\')
         {
-            if (isSet(&syntax, ESCAPE_SEQ))
-            {
-                lastChar = c;
-                clearFlag(&syntax, ESCAPE_SEQ);
-                continue;
-            }
-            else
-            {
-                setFlag(&syntax, ESCAPE_SEQ);
-            }
+            setFlag(&syntax, ESCAPE_SEQ);   
         }
         else
         {
-            if (isSet(&syntax, ESCAPE_SEQ))
-            {
-                lastChar = c;
-                clearFlag(&syntax, ESCAPE_SEQ);
-                continue;
-            }
             clearFlag(&syntax, ESCAPE_SEQ);
         }
 
