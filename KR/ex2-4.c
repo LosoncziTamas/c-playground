@@ -13,7 +13,6 @@ void squeeze(char* s1, const char* s2)
     for (int i = 0; s1[i] != '\0'; ++i)
     {
         bool shiftPiece = false;
-
         for (int j = 0; s2[j] != '\0'; ++j)
         {
             if (s1[i] == s2[j])
@@ -22,7 +21,6 @@ void squeeze(char* s1, const char* s2)
                 break;
             }
         }
-
         if (shiftPiece)
         {
             for (int pieceIndex = i; pieceIndex < len - 1; ++pieceIndex)
