@@ -12,7 +12,6 @@
 int setbits(int x, int p, int n, int y)
 {
     int nSet = ~(ALL_SET << n);  
-
     int extractY = (y & nSet) << p; 
     int result = (~(nSet << p) & x) | extractY;
 
