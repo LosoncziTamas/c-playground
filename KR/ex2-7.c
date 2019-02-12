@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <assert.h>
 
 /*  Write a function invert(x,p,n) 
@@ -7,7 +6,7 @@
     (i.e., 1 changed into 0 and vice versa),
     leaving the others unchanged. */
 
-#define ALL_SET ~0
+#define ALL_SET ~0U
 
 unsigned int invert(unsigned int x, int p, int n)
 {

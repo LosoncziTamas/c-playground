@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <assert.h>
 
 /*  Write a function rightrot(x,n) 
