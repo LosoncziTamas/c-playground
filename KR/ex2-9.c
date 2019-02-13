@@ -6,14 +6,9 @@
     Explain why. Use this observation 
     to write a faster version of bitcount. */
 
-/*
-    In two's complement system all odd numbers
-    have the rightmost set to 1.
-    Subtracting one even from a negative number
-    will always change the rightmost bit.
-    x = x & (x - 1); 
-
-*/
+/*  The rightmost 1-bit of x has a 
+    corresponding 0-bit in x - 1. Masking
+    will always clear the rightmost bit of x. */
 
 int bitcount(unsigned x)
 {
