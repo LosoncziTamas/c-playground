@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdio.h>
 
 /*  In a two's complement number 
@@ -6,17 +7,25 @@
     Explain why. Use this observation 
     to write a faster version of bitcount. */
 
-/*  The rightmost 1-bit of x has a 
-    corresponding 0-bit in x - 1. Masking
-    will always clear the rightmost bit of x. */
+/*  In two's complement system all odd numbers
+    have the rightmost set to 1.
+    Subtracting one even from a negative number
+    will always change the rightmost bit.
+    x = x & (x - 1); */
 
 int bitcount(unsigned x)
 {
-    x = x & (x - 1);
-    return 0;
+    int count = 0;
+    for (count = 0; x; ++count){
+        x = x & (x - 1);
+    }
+    return count;
 }
 
 int main()
 {
-
+    assert(bitcount(0xFFU) == 8);
+    assert(bitcount(0xFU) == 4);
+    assert(bitcount(0xC7U) == 5);
+    assert(bitcount(0) == 0);
 }
