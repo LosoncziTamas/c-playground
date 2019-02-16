@@ -9,23 +9,21 @@
 
 int binsearch(int x, int v[], int len)
 {
-    for(int high = len - 1, low = 0; low <= high;)
+    int mid = 0;
+    for(int high = len - 1, low = 0; low <= high && v[mid] != x;)
     {
-        int mid = (low + high) / 2;
-        if (v[mid] > x)
+        mid = (low + high) / 2;
+        if (v[mid] >= x)
         {
             high = mid - 1;
         }
-        else if (v[mid] < x)
+        else
         {
             low = mid + 1;
         }
-        else 
-        {
-            return mid;
-        }
     }
-    return -1;
+    int result = v[mid] == x ? mid : -1;
+    return result;
 }
 
 int main()
