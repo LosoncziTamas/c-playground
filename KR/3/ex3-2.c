@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdbool.h>
 
 /*  Write a function escape (s, t) 
     that converts characters like 
@@ -40,32 +41,64 @@ void escape(char s[], char t[])
 
 void unescape(char s[], char t[])
 {
-    char prevChar = 0;
+    int offset = 0;
+    int i = 0;
+    bool escaped = false;
 
-    for(int i = 0; t[i]; ++i)
+    while(t[i])
     {
         switch (t[i])
         {
-            case 'n':
-                if (prevChar == '\\')
+            case '\\':
+                if (escaped)
                 {
-
+                    s[i + offset] = '\\';
+                    s[i + ++offset] = '\\';
+                    escaped = false;
                 }
-                s[i] = '\n';
+                else
+                {
+                    escaped = true;
+                    s[i + offset] = t[i];
+                }
+                break;
+            case 'n':
+                if (escaped)
+                {
+                    --offset;
+                    s[i + offset] = '\n';
+                }
+                else
+                {
+                    s[i + offset] = 'n';
+                }
+                escaped = false;
                 break;
             case 't':
-                if (prevChar == '\\')
+                if (escaped)
                 {
-
+                    --offset;
+                    s[i + offset] = '\t';
                 }
-                s[i] = '\t';
+                else
+                {
+                    s[i + offset] = 't';
+                }
+                escaped = false;
                 break;
             default:
-
+                if (escaped)
+                {
+                    s[i + ++offset] = '\\';
+                }
+                s[i + offset] = t[i];
+                escaped = false;
                 break;
         }
-        prevChar = t[i];
+        ++i;
     }
+
+    s[i + offset + 1] = '\0';
 }
 
 int main()
@@ -75,5 +108,9 @@ int main()
     escape(s, t);
     puts(s);
 
+    char s2[23] = {0};
+    char t2[] = "alma \\ korte \\t barack";
+    unescape(s2, t2);
+    puts(t);
     return 0;
 }
