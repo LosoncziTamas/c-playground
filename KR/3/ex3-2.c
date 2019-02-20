@@ -52,14 +52,13 @@ void unescape(char s[], char t[])
             case '\\':
                 if (escaped)
                 {
-                    s[i + offset] = '\\';
-                    s[i + ++offset] = '\\';
+                    s[i + --offset] = '\\';
+                    s[i + ++offset] = '\\';                    
                     escaped = false;
                 }
                 else
                 {
                     escaped = true;
-                    s[i + offset] = t[i];
                 }
                 break;
             case 'n':
@@ -89,7 +88,8 @@ void unescape(char s[], char t[])
             default:
                 if (escaped)
                 {
-                    s[i + ++offset] = '\\';
+                    s[i + --offset] = '\\';
+                    ++offset;
                 }
                 s[i + offset] = t[i];
                 escaped = false;
@@ -109,8 +109,8 @@ int main()
     puts(s);
 
     char s2[23] = {0};
-    char t2[] = "alma \\ korte \\t barack";
+    char t2[] = "alma \\n \\t korte \\t barack";
     unescape(s2, t2);
-    puts(t);
+    puts(s2);
     return 0;
 }
