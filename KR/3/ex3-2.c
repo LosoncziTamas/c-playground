@@ -14,102 +14,67 @@
 
 void escape(char s[], char t[])
 {
-    int i = 0;
-    int offset = 0;
+    int i, j;
 
-    while(t[i])
+    for (i = 0, j = 0; t[i]; ++i)
     {
         switch (t[i])
         {
             case '\n':
-                s[i + offset++] = '\\';
-                s[i + offset] = 'n';
+                s[j++] = '\\';
+                s[j++] = 'n';
                 break;
             case '\t':
-                s[i + offset++] = '\\';
-                s[i + offset] = 't';
+                s[j++] = '\\';
+                s[j++] = 't';
                 break;
             default:
-                s[i + offset] = t[i];
+                s[j++] = t[i];
                 break;
         }
-        ++i;
     }
-
-    s[i + offset + 1] = '\0';
+    s[j] = '\0';
 }
 
 void unescape(char s[], char t[])
 {
-    int offset = 0;
-    int i = 0;
-    bool escaped = false;
-
-    while(t[i])
+    int i,j;
+    for(i = 0, j = 0; t[i]; ++i)
     {
         switch (t[i])
         {
             case '\\':
-                if (escaped)
+                switch (t[++i])
                 {
-                    s[i + --offset] = '\\';
-                    s[i + ++offset] = '\\';                    
-                    escaped = false;
+                    case 't':
+                        s[j++] = '\t';
+                        break;
+                    case 'n':
+                        s[j++] = '\n';
+                        break;
+                    default:
+                        s[j++] = '\\';
+                        s[j++] = t[i];
+                        break;
                 }
-                else
-                {
-                    escaped = true;
-                }
-                break;
-            case 'n':
-                if (escaped)
-                {
-                    --offset;
-                    s[i + offset] = '\n';
-                }
-                else
-                {
-                    s[i + offset] = 'n';
-                }
-                escaped = false;
-                break;
-            case 't':
-                if (escaped)
-                {
-                    --offset;
-                    s[i + offset] = '\t';
-                }
-                else
-                {
-                    s[i + offset] = 't';
-                }
-                escaped = false;
                 break;
             default:
-                if (escaped)
-                {
-                    s[i + --offset] = '\\';
-                    ++offset;
-                }
-                s[i + offset] = t[i];
-                escaped = false;
+                s[j++] = t[i];
                 break;
         }
-        ++i;
     }
-
-    s[i + offset + 1] = '\0';
+    s[j] = '\0';
 }
 
 int main()
 {
-    char s[25] = {0};
+    char s[23] = {0};
     char t[] = "alma \n korte \t barack";
     escape(s, t);
     puts(s);
 
-    char s2[23] = {0};
-    char t2[] = "alma \\n \\t korte \\t barack";
+    char s2[26] = {0};
+    char t2[] = "alma \\n \\t \\\\ korte \\t barack";
     unescape(s2, t2);
     puts(s2);
     return 0;
