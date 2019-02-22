@@ -11,31 +11,33 @@
 
 void expand(char s1[], char s2[])
 {
-    char start = 0;
-    char end = 0;
+    int j = 0;
 
     for(int i = 0; s1[i]; ++i)
     {
         if (s1[i] == '-')
         {
-            start = i > 0 ? s1[i - 1] : FIRST;
-            end = s1[i + 1] ? s1[i + 1] : LAST;
+            char start = i > 0 ? s1[i - 1] : FIRST;
+            char end = s1[i + 1] ? s1[i + 1] : LAST;
 
-            for(char j = start + 1; j < end; ++j)
+            for(int c = start + 1; c < end; ++c)
             {
-                putchar(j);
+                s2[j++] = c;
             }
         }
         else
         {
-            putchar(s1[i]);
+            s2[j++] = s1[i];
         }
     }
+
+    s2[j] = '\0';
 }
 
 int main()
 {
-    char s1[] = "ab-z";
+    char s1[] = "A-Z0-9";
     char s2[100];
     expand(s1, s2);
+    printf("%s", s2);
 }
