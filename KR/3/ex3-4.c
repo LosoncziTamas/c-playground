@@ -1,11 +1,15 @@
 #include <string.h>
 #include <stdio.h>
+#include <limits.h>
 
 /*  In a two's complement number representation, our version of
     itoa does not handle the largest negative number, that is, the value of n equal
     to -(2 ^wordsize-l). Explain why not. Modify it to print that value correctly,
     regardless of the machine on which it runs. */
 
+/*  There is one extra negative number which doesn't 
+    have a corresponding positive. So it cannot be negated. */
+    
 void reverse(char c[])
 {
     int len = strlen(c);
@@ -19,12 +23,28 @@ void reverse(char c[])
 
 void itoa(int n, char s[])
 {
-
+    int i, sign;
+    if ((sign = n) < 0)
+    {
+        n = -n;
+    }
+    i = 0;
+    do
+    {
+        s[i++] = n % 10 + '0';
+    } while ((n /= 10) > 0);
+    if (sign < 0)
+    {
+        s[i++] = '-';
+    }
+    s[i] = '\0';
+    reverse(s);
+    
 }
 
 int main()
 {
-    char str[] = "almafa";
-    reverse(str);
+    char str[64];
+    itoa(INT_MIN, str);
     puts(str);
 }
