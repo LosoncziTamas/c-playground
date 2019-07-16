@@ -1,5 +1,6 @@
 #include <ctype.h>
 #include <stdio.h>
+#include <math.h>
 
 double atof(char s[]) 
 {
@@ -26,6 +27,8 @@ double atof(char s[])
         val = 10.0 * val + (s[i] - '0');
         power *= 10.0;
     }
+
+    double result = sign * val / power;
     
     if (s[i] == 'e' || s[i] == 'E')
     {
@@ -40,11 +43,13 @@ double atof(char s[])
         {
             exp = 10.0 * exp + (s[i] - '0');
         }
-
+        result *= pow(10, expSign * exp);
     }
 
+    return result;
 }
 
 int main() {
-
+    double n = atof("123.456");
+    printf("%f", n);
 }
