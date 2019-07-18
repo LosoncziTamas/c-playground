@@ -1,13 +1,20 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <math.h>
+#include <assert.h>
 
-double atof(char s[]) 
+/*
+    Extend atof to handle scientific notation of the form 123.456e-6
+    where floating-point number may be followed by e or E and an optionally
+    singed exponent.
+*/
+
+double atof2(char s[]) 
 {
     double val, power;
     int i, sign;
 
-    for (int i = 0; isspace(s[i]); i++)
+    for (i = 0; isspace(s[i]); i++)
         ;
     sign = (s[i] == '-') ? -1 : 1;
     if (s[i] == '+' || s[i] == '-') 
@@ -29,7 +36,7 @@ double atof(char s[])
     }
 
     double result = sign * val / power;
-    
+
     if (s[i] == 'e' || s[i] == 'E')
     {
         i++;
@@ -50,6 +57,6 @@ double atof(char s[])
 }
 
 int main() {
-    double n = atof("123.456");
-    printf("%f", n);
+    double n = atof2("123.456e6");
+    assert(n == 123456000.0);
 }
