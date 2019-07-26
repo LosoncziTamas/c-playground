@@ -1,51 +1,17 @@
 #include <stdio.h>
-#include <math.h>
+#include <stdlib.h>
 #include <ctype.h>
 
-#define MAXOP 100
+#include "io.c"
+#include "stack.c"
+
 #define NUMBER '0'
-
-int getop(char str[]);
-void push(double n);
-double pop();
-
-#define MAXVAL 100
-
-int sp = 0; 
-double val[MAXVAL];
-
-void push(double f)
-{
-    if (sp < MAXVAL)
-    {
-        val[sp++] = f;
-    } 
-    else 
-    {
-        printf("error: stack full, can't push %g\n", f);
-    }
-}
-
-double pop()
-{
-    if (sp > 0)
-    {
-        return val[--sp];
-    }
-    else 
-    {
-        printf("error: stack empty \n");
-        return 0.0;
-    }
-}
-
-int getch();
-void ungetch();
+#define MAXOP 100
 
 int getop(char s[])
 {
     int i, c;
-    while((s[0] = c = getchar()) == ' ' || c == '\t')
+    while((s[0] = c = getch()) == ' ' || c == '\t')
         ;
     s[1] = '\0';
     // not a number
@@ -68,7 +34,7 @@ int getop(char s[])
     }
     s[i] = '\0';
     if (c != EOF){
-        ungetch();
+        ungetch(c);
     }
     
     return NUMBER;
