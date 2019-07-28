@@ -7,7 +7,9 @@ static int bufp = 0;
 
 int getch()
 {
-    return bufp > 0 ? buf[bufp--] : getchar();
+    int val = bufp > 0 ? buf[bufp--] : getchar();
+    printf("read: %d ", val);
+    return val;
 }
 
 void ungetch(int c)
@@ -15,6 +17,8 @@ void ungetch(int c)
     if (bufp < BUFSIZE)
     {
         buf[bufp++] = c;
+        printf("ungetch: %d ", c);
+
     }
     else 
     {

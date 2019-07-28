@@ -48,38 +48,39 @@ int main()
 
     while((type = getop(s)) != EOF) 
     {
+        printf("type %d \n", type);
         switch (type)
         {
-        case NUMBER:
-            push(atof(s));
-            break;
-        case '+':(
-            push(pop() + pop()));
-            break;
-        case '-':
-            op2 = pop();
-            push(pop() - op2);
-            break;
-        case '*':
-            push(pop() * pop());
-            break;
-        case '/':
-            op2 = pop();
-            if (op2 != 0.0) 
-            {
-                push(pop() / op2);
-            }
-            else
-            {
-                printf("error: zero divisor\n");
-            }
-            break;
-        case '\n':
-            printf("\t%.8g", pop());
-            break;
-        default:
-            printf("error: unknown command %s, \n", s);
-            break;
+            case NUMBER:
+                push(atof(s));
+                break;
+            case '+':(
+                push(pop() + pop()));
+                break;
+            case '-':
+                op2 = pop();
+                push(pop() - op2);
+                break;
+            case '*':
+                push(pop() * pop());
+                break;
+            case '/':
+                op2 = pop();
+                if (op2 != 0.0) 
+                {
+                    push(pop() / op2);
+                }
+                else
+                {
+                    printf("error: zero divisor\n");
+                }
+                break;
+            case '\n':
+                printf("\t%.8g", pop());
+                break;
+            default:
+                printf("error: unknown command %s, \n", s);
+                break;
         }
     }
 
