@@ -8,6 +8,10 @@
 #define NUMBER '0'
 #define MAXOP 100
 
+/*  
+    4-3: add modulus operator
+*/
+
 int getop(char s[])
 {
     int i, c;
@@ -48,7 +52,6 @@ int main()
 
     while((type = getop(s)) != EOF) 
     {
-        printf("type %d \n", type);
         switch (type)
         {
             case NUMBER:
@@ -75,8 +78,20 @@ int main()
                     printf("error: zero divisor\n");
                 }
                 break;
+            case '%':
+                op2 = pop();
+                double op1 = pop();
+                if (op2 < 0 || op1 < 0) 
+                {
+                    printf("error: negative modulus operand\n");
+                }
+                else 
+                {
+                    push((int)op1 % (int)op2);
+                }
+                break;
             case '\n':
-                printf("\t%.8g", pop());
+                printf("\t%.8g\n", pop());
                 break;
             default:
                 printf("error: unknown command %s, \n", s);
