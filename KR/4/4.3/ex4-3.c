@@ -10,6 +10,7 @@
 
 /*  
     4-3: add modulus operator
+    4-4: print, duplicate, swap top elements
 */
 
 int getop(char s[])
@@ -55,19 +56,24 @@ int main()
         switch (type)
         {
             case NUMBER:
+            {
                 push(atof(s));
-                break;
-            case '+':(
-                push(pop() + pop()));
-                break;
+            } break;
+            case '+':
+            {
+                push(pop() + pop());
+            } break;
             case '-':
+            {
                 op2 = pop();
                 push(pop() - op2);
-                break;
+            } break;
             case '*':
+            {
                 push(pop() * pop());
-                break;
+            } break;
             case '/':
+            {
                 op2 = pop();
                 if (op2 != 0.0) 
                 {
@@ -77,8 +83,9 @@ int main()
                 {
                     printf("error: zero divisor\n");
                 }
-                break;
+            } break;
             case '%':
+            {
                 op2 = pop();
                 double op1 = pop();
                 if (op2 < 0 || op1 < 0) 
@@ -89,13 +96,30 @@ int main()
                 {
                     push((int)op1 % (int)op2);
                 }
-                break;
+            } break;
             case '\n':
+            {
                 printf("\t%.8g\n", pop());
-                break;
+            } break;
+            case 'p':
+            {
+                printf("\t%.8g\n", top());
+            } break;
+            case 'd':
+            {
+                push(top());
+            } break;
+            case 's':
+            {
+                op2 = pop();
+                double op1 = pop();
+                push(op2);
+                push(op1);
+            } break;
             default:
+            {
                 printf("error: unknown command %s, \n", s);
-                break;
+            } break;
         }
     }
 

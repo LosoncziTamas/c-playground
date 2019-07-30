@@ -25,7 +25,20 @@ double pop()
     }
     else 
     {
-        printf("error: stack empty \n");
+        printf("pop error: stack empty \n");
         return 0.0;
     }
+}
+
+double top()
+{
+    if (sp >= 0)
+    {
+        return val[sp];
+    }
+    else
+    {
+        printf("top error: stack empty\n");
+        return 0.0;
+    } 
 }
