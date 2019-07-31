@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <math.h>
 
 #include "io.c"
 #include "stack.c"
@@ -11,6 +12,7 @@
 /*  
     4-3: add modulus operator
     4-4: print, duplicate, swap top elements
+    4-5: sin, exp, pow
 */
 
 int getop(char s[])
@@ -72,6 +74,19 @@ int main()
             {
                 push(pop() * pop());
             } break;
+            case '^':
+            {
+                op2 = pop();
+                push(pow(pop(), op2));
+            } break;
+            case 'e':
+            {
+                push(exp(pop()));
+            } break;
+            case 's':
+            {
+                push(sin(pop()));
+            } break;
             case '/':
             {
                 op2 = pop();
@@ -109,7 +124,7 @@ int main()
             {
                 push(top());
             } break;
-            case 's':
+            case 'w':
             {
                 op2 = pop();
                 double op1 = pop();
