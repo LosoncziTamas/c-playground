@@ -32,13 +32,21 @@ double pop()
 
 double top()
 {
-    if (sp >= 0)
+    if (sp > 0)
     {
-        return val[sp];
+        return val[sp - 1];
     }
     else
     {
         printf("top error: stack empty\n");
         return 0.0;
     } 
+}
+
+void clear()
+{
+    while (sp--)
+    {
+        pop();
+    }
 }

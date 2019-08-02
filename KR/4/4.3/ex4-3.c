@@ -8,11 +8,13 @@
 
 #define NUMBER '0'
 #define MAXOP 100
+#define MAXVAR 26
 
 /*  
     4-3: add modulus operator
     4-4: print, duplicate, swap top elements
     4-5: sin, exp, pow
+    4-6: handling variables
 */
 
 int getop(char s[])
@@ -52,6 +54,13 @@ int main()
     int type;
     double op2;
     char s[MAXOP];
+    double ans;
+
+    double variables[MAXVAR];
+    for(int i = 0; i < MAXVAR; ++i)
+    {
+        variables[i] = 0.0;
+    }
 
     while((type = getop(s)) != EOF) 
     {
@@ -102,22 +111,23 @@ int main()
             case '%':
             {
                 op2 = pop();
-                double op1 = pop();
-                if (op2 < 0 || op1 < 0) 
+                if (op2 == 0.0) 
                 {
-                    printf("error: negative modulus operand\n");
+                    printf("error: zero divisor\n");
                 }
                 else 
                 {
-                    push((int)op1 % (int)op2);
+                    push(fmod(pop(), op2));
                 }
             } break;
             case '\n':
             {
+                ans = top();
                 printf("\t%.8g\n", pop());
             } break;
-            case 'p':
+            case '?':
             {
+                ans = top();
                 printf("\t%.8g\n", top());
             } break;
             case 'd':
@@ -131,9 +141,36 @@ int main()
                 push(op2);
                 push(op1);
             } break;
+            case 'c':
+            {
+                ans = 0.0;
+                clear();
+            } break;
+            // most recently printed
+            case 'a':
+            {
+                push(ans);
+                printf("variable: %f \n", ans);
+            } break;
+            // variable handling
+            case '=':
+            {
+                int var = getop(s);
+                if (var >= 'A' && var <= 'Z')
+                {
+                    variables['Z' - var] = top();
+                }
+            } break;
             default:
             {
-                printf("error: unknown command %s, \n", s);
+                if (type >= 'A' && type <= 'Z')
+                {
+                    
+                }
+                else
+                {
+                    printf("error: unknown command %s, \n", s);
+                }
             } break;
         }
     }
