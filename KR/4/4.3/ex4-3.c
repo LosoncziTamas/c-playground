@@ -54,12 +54,14 @@ int main()
     int type;
     double op2;
     char s[MAXOP];
-    double ans;
+    int var;
 
-    double variables[MAXVAR];
+    double variableValues[MAXVAR];
+    int definedVariables[MAXVAR];
     for(int i = 0; i < MAXVAR; ++i)
     {
-        variables[i] = 0.0;
+        variableValues[i] = 0.0;
+        definedVariables[i] = 0;
     }
 
     while((type = getop(s)) != EOF) 
@@ -122,12 +124,10 @@ int main()
             } break;
             case '\n':
             {
-                ans = top();
                 printf("\t%.8g\n", pop());
             } break;
             case '?':
             {
-                ans = top();
                 printf("\t%.8g\n", top());
             } break;
             case 'd':
@@ -143,35 +143,32 @@ int main()
             } break;
             case 'c':
             {
-                ans = 0.0;
                 clear();
-            } break;
-            // most recently printed
-            case 'a':
-            {
-                push(ans);
-                printf("variable: %f \n", ans);
             } break;
             // variable handling
             case '=':
             {
-                int var = getop(s);
                 if (var >= 'A' && var <= 'Z')
                 {
-                    variables['Z' - var] = top();
+                    definedVariables['Z' - var] = 1;
+                    variableValues['Z' - var] = top();
                 }
             } break;
             default:
             {
                 if (type >= 'A' && type <= 'Z')
                 {
-                    
+                    if (definedVariables['Z' - type])
+                    {
+                        push(variableValues['Z' - type]);
+                    }
                 }
                 else
                 {
                     printf("error: unknown command %s, \n", s);
                 }
             } break;
+            var = type;
         }
     }
 
