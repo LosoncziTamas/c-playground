@@ -15,6 +15,7 @@
     4-4: print, duplicate, swap top elements
     4-5: sin, exp, pow
     4-6: handling variables
+    4-7: ungets
 */
 
 int getop(char s[])
@@ -51,17 +52,14 @@ int getop(char s[])
 
 int main()
 {
-    int type;
-    double op2;
+    int type, var = 0;
+    double op2, v;
     char s[MAXOP];
-    int var;
 
-    double variableValues[MAXVAR];
-    int definedVariables[MAXVAR];
+    double variables[MAXVAR];
     for(int i = 0; i < MAXVAR; ++i)
     {
-        variableValues[i] = 0.0;
-        definedVariables[i] = 0;
+        variables[i] = 0.0;
     }
 
     while((type = getop(s)) != EOF) 
@@ -124,7 +122,8 @@ int main()
             } break;
             case '\n':
             {
-                printf("\t%.8g\n", pop());
+                v = pop();
+                printf("\t%.8g\n", v);
             } break;
             case '?':
             {
@@ -145,23 +144,29 @@ int main()
             {
                 clear();
             } break;
-            // variable handling
             case '=':
             {
+                pop();
                 if (var >= 'A' && var <= 'Z')
                 {
-                    definedVariables['Z' - var] = 1;
-                    variableValues['Z' - var] = top();
+                    int varIndex = var - 'A';
+                    variables[varIndex] = pop();
+                }
+                else
+                {
+                    printf("error: invalid variable %s, \n", var);
                 }
             } break;
+            case 'v':
+            {
+                push(v);
+            }
             default:
             {
                 if (type >= 'A' && type <= 'Z')
                 {
-                    if (definedVariables['Z' - type])
-                    {
-                        push(variableValues['Z' - type]);
-                    }
+                    int varIndex = type - 'A';
+                    push(variables[varIndex]);
                 }
                 else
                 {

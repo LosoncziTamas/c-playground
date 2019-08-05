@@ -22,3 +22,11 @@ void ungetch(int c)
         printf("ungetch: too many characters\n");
     }
 }
+
+void ungets(char s[])
+{
+    for (int i = 0; s[i]; ++i)
+    {
+        ungetch(s[i]);
+    }
+}
