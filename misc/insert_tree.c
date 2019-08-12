@@ -3,65 +3,64 @@
 #include <math.h>
 #include <stdlib.h>
 
-struct Node 
+typedef struct Node 
 {    
     int data;
     struct Node *left;
     struct Node *right; 
-};
+} Node;
 
-void preOrder(struct Node *root) 
+void PreOrder(Node *root) 
 {
 	if (root == NULL)
     {
       return;
     }
 	printf("%d ", root->data);
-	preOrder(root->left);
-	preOrder(root->right);
+	PreOrder(root->left);
+	PreOrder(root->right);
 }
 
-struct Node* createNode(int data)
+Node* CreateNode(int data)
 {
-    struct Node* result = malloc(sizeof(struct Node));
+    Node* result = malloc(sizeof(Node));
     result->data = data;
+    result->left = NULL;
+    result->right = NULL;
+
     return result;
 }
 
-struct Node* insert(struct Node* root, int data) 
+struct Node* Insert(Node* root, int data) 
 {
     if (!root)
     {
-        root = createNode(data);
-        return root;
+        return CreateNode(data);
     }
 
 	if (data < root->data)
     {
-        insert(root->left, data);
+        Node* left = Insert(root->left, data);
+        root->left = left;
     }
     else 
     {
-        insert(root->right, data);
+        Node* right = Insert(root->right, data);
+        root->right = right;
     }
     return root;
 }
 
 int main() {
   
-    struct Node* root = NULL;
+    Node* root = NULL;
+
+    root = Insert(root, 4);
+    root = Insert(root, 3);
+    root = Insert(root, 2);
+    root = Insert(root, 1);
     
-    int t;
-    int data;
+	PreOrder(root);
 
-    scanf("%d", &t);
-
-    while(t-- > 0) 
-    {
-        scanf("%d", &data);
-        root = insert(root, data);
-    }
-  
-	preOrder(root);
     return 0;
 }
