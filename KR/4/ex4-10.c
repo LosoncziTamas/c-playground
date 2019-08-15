@@ -1,6 +1,9 @@
 #include <stdio.h>
+#include <ctype.h>
 
 #define BUFSIZE 100
+#define MAXOP 100
+#define NUMBER '0'
 
 char buf[BUFSIZE];
 int bufp = 0;
@@ -24,7 +27,7 @@ int getline(char s[], int lim)
 
 int getop(char s[])
 {
-    char c;
+    int c;
     if (bufp == 0 || buf[bufp] == '\0')
     {
         bufp = 0;
@@ -34,5 +37,32 @@ int getop(char s[])
     
     while((c = buf[bufp++]) == ' ' || c == '\t')
         ;
-    // if (isdigit())
+    
+    if (!isdigit(c) && c != '.') {
+        return c;
+    }
+    int i = 0;
+    if (isdigit(c)) {
+        while(isdigit(s[i++] = c = buf[bufp++]));
+    }
+    if (c == '.') {
+        while(isdigit(s[i++] = c = buf[bufp++]));
+    }
+    s[i] = '\0';
+    
+    return NUMBER;
+}
+
+int main()
+{
+    int type;
+    char s[MAXOP];
+    
+    while((type = getop(s)) != EOF) {
+        switch(type) {
+            case NUMBER:
+            default:
+                printf("\n %d", type);
+        }
+    }
 }
