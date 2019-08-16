@@ -5,6 +5,16 @@
 static int sp = 0; 
 static double val[MAXVAL];
 
+void printStack() 
+{
+    int len = sp;
+    printf("stack content: ");
+    while(len--) {
+        printf(" %.8g", val[len]);
+    }
+    printf(" \n");
+}
+
 void push(double f)
 {
     if (sp < MAXVAL)
@@ -15,6 +25,7 @@ void push(double f)
     {
         printf("error: stack full, can't push %g\n", f);
     }
+    printStack();
 }
 
 double pop()
@@ -42,6 +53,7 @@ double top()
         return 0.0;
     } 
 }
+
 
 void clear()
 {

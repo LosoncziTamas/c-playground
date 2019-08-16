@@ -3,9 +3,9 @@
 #include <ctype.h>
 #include <math.h>
 
-#include "io.c"
 #include "stack.c"
 
+#define BUFSIZE 100
 #define NUMBER '0'
 #define MAXOP 100
 #define MAXVAR 26
@@ -16,37 +16,69 @@
     4-5: sin, exp, pow
     4-6: handling variables
     4-7: ungets
+    4-10: use getline
 */
+
+char buf[BUFSIZE];
+int bufp = 0;
+
+int getline(char s[], int lim) 
+{
+    int c, i;
+
+    i = 0;
+    while(--lim > 0 && (c = getchar()) != EOF && c != '\n')
+    {
+        s[i++] = c;
+    }
+    if (c == '\n')
+    {
+        s[i++] = c;
+    }
+    s[i] = '\0';
+    return i;
+}
 
 int getop(char s[])
 {
-    int i, c;
-    while((s[0] = c = getch()) == ' ' || c == '\t')
-        ;
-    s[1] = '\0';
-    // not a number
-    if (!isdigit(c) && c != '.')
+    if (bufp == 0 || buf[bufp] == '\0')
     {
-        return c;
-    } 
-    i = 0;
-    // collect integer
-    if (isdigit(c))
-    {
-        while (isdigit(s[++i] = c = getch()))    
-            ;
+        bufp = 0;
+        //TODO: clear buffer
+        getline(buf, BUFSIZE);
     }
-    // collect fraction
-    if (c == '.')
+
+    int c = buf[bufp++];
+    while(c == ' ' || c == '\t') 
     {
-        while (isdigit(s[++i] = c = getch()))
-            ;
+        c = buf[bufp++];
+    }
+    if (!isdigit(c) && c != '.') {
+        return c;
+    }
+
+    int i = 0;
+    if (isdigit(c)) {
+        s[i++] = c;
+        c = buf[bufp++];
+        while(isdigit(c))
+        {
+            s[i++] = c;
+            c = buf[bufp++];
+        }
+    }
+
+    if (c == '.') {
+        s[i++] = c;
+        c = buf[bufp++];
+        while(isdigit(c))
+        {
+            s[i++] = c;
+            c = buf[bufp++];
+        }
     }
     s[i] = '\0';
-    if (c != EOF){
-        ungetch(c);
-    }
-    
+
     return NUMBER;
 }
 
