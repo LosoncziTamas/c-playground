@@ -2,10 +2,9 @@
 #include <assert.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #define ArrayCount(array) (sizeof(array)) / (sizeof((array)[0]))
-#define true 1
-#define false 0
 
 void TestArrayCount()
 {
@@ -72,19 +71,42 @@ void TestStringLength()
     assert(StringLengthSafe(string, max) < max);
 }
 
-void StringConcat(const char* sourceA, uint32 sourceALen, const char* sourceB, uint32 sourceBLen, char* dest)
+void StringConcat(const char* sourceA, uint32 sourceALen, const char* sourceB, uint32 sourceBLen, char* dest, uint32 destLen)
 {
-    while(true)
-    {
-        if(*sourceA++)
-        {
-            
-        }
-        else if(*sourceB++)
-        {
+    assert(destLen > sourceALen + sourceBLen);
 
+    for(uint32 charIndex = 0; charIndex < sourceALen; ++charIndex)
+    {
+        dest[charIndex] = sourceA[charIndex];
+    }
+    for(uint32 charIndex = 0; charIndex < sourceBLen; ++charIndex)
+    {
+        dest[sourceALen + charIndex] = sourceB[charIndex];
+    }
+    dest[sourceALen + sourceBLen] = '\0';
+}
+
+bool StringsAreEqual(const char* stringA, const char* stringB)
+{
+    uint32 charIndex;
+
+    for(charIndex = 0; stringA[charIndex]; ++charIndex)
+    {
+        if(stringA[charIndex] != stringB[charIndex])
+        {
+            return false;
         }
     }
+
+    return stringA[charIndex] == stringB[charIndex];
+}
+
+void TestStringsAreEqual()
+{
+    assert(StringsAreEqual("1 2 ", "1 2 "));
+    assert(StringsAreEqual(" 1 2 ", " 1 2 "));
+    assert(!StringsAreEqual("1 2 ", " 1 2  "));
+    assert(!StringsAreEqual("  1 2 ", " 1 2"));
 }
 
 void TestStringConcat()
@@ -93,7 +115,8 @@ void TestStringConcat()
     char sourceB[] = "5678";
     char dest[10];
 
-    // StringConcat(sourceA, 4, sourceB, 4, dest);
+    StringConcat(sourceA, 4, sourceB, 4, dest, 10);
+    assert(StringsAreEqual("12345678", dest));
 }
 
 int main(void) 
@@ -102,4 +125,5 @@ int main(void)
     TestIntSize();
     TestStringLength();
     TestStringConcat();
+    TestStringsAreEqual();
 }
