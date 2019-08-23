@@ -64,3 +64,40 @@ bool StringsAreEqual(const char* stringA, const char* stringB)
 
     return stringA[charIndex] == stringB[charIndex];
 }
+
+void PrintIntegerArray(int32* array, uint32 count)
+{
+    printf("[");
+    for (uint32 elementIndex = 0; elementIndex < count; ++elementIndex)
+    {
+        if (elementIndex == count - 1)
+        {
+            printf("%d]\n", array[elementIndex]);
+        }
+        else 
+        {
+            printf("%d, ", array[elementIndex]);
+        }
+    }
+}
+
+void PrintCharArray(char* array, uint32 count)
+{
+    printf("[");
+    for (uint32 elementIndex = 0; elementIndex < count; ++elementIndex)
+    {
+        if (elementIndex == count - 1)
+        {
+            printf("%c]\n", array[elementIndex]);
+        }
+        else 
+        {
+            printf("%c, ", array[elementIndex]);
+        }
+    }
+}
+
+void PrintInteger(int32 integer)
+{
+    printf("%d\n", integer);
+}
