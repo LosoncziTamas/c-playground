@@ -8,11 +8,17 @@
 
 void IntegerToString(int32 integer, char string[])
 {
-    PrintInteger(integer);
-    PrintCharArray(string, 4);
+    if (integer < 0)
+    {
+        *string = '-';
+        string = &string[1];
+        //TODO: How to handle -INT_MIN
+        IntegerToString(-integer, string);
+        return;
+    }
     if (integer == 0)
     {
-        *string = '0' + integer;
+        *string = '\0';
     }
     else
     {
@@ -33,7 +39,14 @@ void IntegerToString(int32 integer, char string[])
 
 int main()
 {
-    char string[5] = {'a', 'b', 'c', 'd', '\0'};
-    IntegerToString(1234, string);
-    PrintCharArray(string, 4);
+    char string[10]; 
+    IntegerToString(4678, string);
+    assert(StringsAreEqual("4678", string));
+
+    IntegerToString(-123, string);
+    assert(StringsAreEqual("-123", string));
+
+    //TODO: Fix
+    IntegerToString(0, string);
+    assert(StringsAreEqual("0", string));
 }

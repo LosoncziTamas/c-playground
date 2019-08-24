@@ -10,6 +10,21 @@ typedef uint32_t uint32;
 typedef int32_t int32;
 typedef int32 bool32;
 
+void PrintInteger(int32 integer)
+{
+    printf("%d\n", integer);
+}
+
+void PrintText(const char* text)
+{
+    printf("%s\n", text);
+}
+
+void PrintChar(char c)
+{
+    printf("%c\n", c);
+}
+
 uint32 StringLength(const char* string)
 {
     uint32 result = 0;
@@ -65,6 +80,7 @@ bool StringsAreEqual(const char* stringA, const char* stringB)
     return stringA[charIndex] == stringB[charIndex];
 }
 
+
 void PrintIntegerArray(int32* array, uint32 count)
 {
     printf("[");
@@ -97,7 +113,3 @@ void PrintCharArray(char* array, uint32 count)
     }
 }
 
-void PrintInteger(int32 integer)
-{
-    printf("%d\n", integer);
-}
