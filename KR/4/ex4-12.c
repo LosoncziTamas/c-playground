@@ -12,31 +12,29 @@ void IntegerToString(int32 integer, char string[])
 
     if (integer / 10) 
     {
-        i++;
-        IntegerToString(integer / 10, string); //4678, 467, 46
+        IntegerToString(integer / 10, string);
     }
     else 
     {
-        string[0] = '0' + integer; // 4
-        PrintChar(string[0]);
-        return;
+       i = 0;
+       if (integer < 0) 
+       {
+           string[i++] = '-';
+       }
     }
-    string[i--] = '0' + integer / 10; //
+    string[i++] = '0' +  abs(integer) % 10;
+    string[i] = '\0';    
 }
-
-
 
 int main()
 {
     char string[10]; 
     IntegerToString(4678, string);
-    PrintCharArray(string, 5);
-    //assert(StringsAreEqual("4678", string));
+    assert(StringsAreEqual("4678", string));
 
-    IntegerToString(123, string);
-    //assert(StringsAreEqual("123", string));
+    IntegerToString(-123, string);
+    assert(StringsAreEqual("-123", string));
 
-    //TODO: Fix
     IntegerToString(0, string);
-    //assert(StringsAreEqual("0", string));
+    assert(StringsAreEqual("0", string));
 }
