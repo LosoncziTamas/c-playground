@@ -1,5 +1,7 @@
 #include "loso_utils.c"
 
+#define CHUNK_SIZE 128
+
 int ReadByChunk(int chunk[], int chunkSize)
 {
     int c, readCharCount = 0;
@@ -15,23 +17,37 @@ int ReadByChunk(int chunk[], int chunkSize)
 
 int main(int argc, char** argv)
 {
-    int charBuff[128];
+    int charBuff[CHUNK_SIZE];
     int readCharCount = 0;
-    int lineCounter = 0;
-
-    while (readCharCount = ReadByChunk(charBuff, 128))
+    int lineCounter = 1;
+    bool activeLineComment = false;
+    bool activeBlockComment = false;
+    
+    //TODO: iterate over folder elements
+    //TODO: consider when TODO is at halfway
+    while ((readCharCount = ReadByChunk(charBuff, CHUNK_SIZE)))
     {
         for (int i = 0; i < readCharCount; ++i)
         {
             if (charBuff[i] == '\n')
             {
                 lineCounter++;
+                activeLineComment = false;
             }
-            if (charBuff[i] == 'T' && i + 3 < readCharCount)
+            if (charBuff[i] == '/')
             {
-                if (charBuff[i + 1] == 'O' && charBuff[i + 2] == 'D' && charBuff[i + 3] == 'O')
+                activeLineComment = !activeBlockComment && (i + 1 < readCharCount) && charBuff[i + 1] == '/';
+                printf("activeLineComment %d line: %d\n", activeLineComment, lineCounter);
+            }
+            if (activeLineComment || activeBlockComment)
+            {
+                if (charBuff[i] == 'T' && i + 3 < readCharCount)
                 {
-                    printf("TODO at line: %d\n", lineCounter);
+                    if (charBuff[i + 1] == 'O' && charBuff[i + 2] == 'D' && charBuff[i + 3] == 'O')
+                    {
+                        // file name and path
+                        printf("TODO at line: %d\n", lineCounter);
+                    }
                 }
             }
         }
