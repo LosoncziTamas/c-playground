@@ -1,43 +1,72 @@
 #include <stdio.h>
 #include <assert.h>
+#include <math.h>
 #include "../../utils/loso_utils.c"
 
 /*
     Reverse string recursively. 
 */
 
+int32 CeilFloatToInt32(float real)
+{
+    int32 result = (int32)ceilf(real);
+    return result;
+}
+
 void ReverseString(char string[])
 {
-    static uint32 i = 0; // 2
-    int len = StringLength(string); // 2
-
-    if (string[i])
+    static int32 i = 0;
+    uint32 len = StringLength(string);
+    PrintInteger(i);
+    if (i == (len / 2))
     {
-        char tmp = string[i];
-        string[i] = string[len - 1];
-        string[len] = tmp;
-        string[len - 1] = '\0'; // 42'0'31
-        ++i;
-        ReverseString(string);
+        
+        i = 0;
+        return;
     }
-    else 
-    {
-        string[i] = string[len + 1];
-        for (int32 j = 0; j < len; ++j)
-        {
-            string[i] = string[len + 1];
-        }
-         // 42331
-        string[i + len] = '\0';
+    uint32 swapIndexA = (len / 2) - i - 1;
+    uint32 swapIndexB = CeilFloatToInt32(len / 2.0f) + i;
+    char tmp = string[swapIndexA];
+    printf("swapping: %c %c \n", string[swapIndexA], string[swapIndexB]);
+    string[swapIndexA] = string[swapIndexB];
+    string[swapIndexB] = tmp;
+    ++i; 
+    ReverseString(string);
+}
 
-    }
+void TestReverse1()
+{
+    char string[] = "1234";
+    ReverseString(string);
+    assert(StringsAreEqual(string, "4321"));
+}
+
+void TestReverse2()
+{
+    char string[] = "123";
+    ReverseString(string);
     PrintText(string);
+    assert(StringsAreEqual(string, "321"));
+}
+
+void TestReverse3()
+{
+    char string[] = "12";
+    ReverseString(string);
+    assert(StringsAreEqual(string, "21"));
+}
+
+void TestReverse4()
+{
+    char string[] = "1";
+    ReverseString(string);
+    assert(StringsAreEqual(string, "1"));
 }
 
 int main()
 {
-    char string[] = "1234";
-    ReverseString(string);
-
-    // assert(StringsAreEqual(string, "4321"));
+    TestReverse1();
+    TestReverse2();
+    TestReverse3();
+    TestReverse4();
 }
