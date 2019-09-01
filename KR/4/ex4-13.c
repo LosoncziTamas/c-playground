@@ -17,20 +17,20 @@ void ReverseString(char string[])
 {
     static int32 i = 0;
     uint32 len = StringLength(string);
-    PrintInteger(i);
+
     if (i == (len / 2))
     {
-        
         i = 0;
         return;
     }
     uint32 swapIndexA = (len / 2) - i - 1;
     uint32 swapIndexB = CeilFloatToInt32(len / 2.0f) + i;
+    
     char tmp = string[swapIndexA];
-    printf("swapping: %c %c \n", string[swapIndexA], string[swapIndexB]);
     string[swapIndexA] = string[swapIndexB];
     string[swapIndexB] = tmp;
     ++i; 
+
     ReverseString(string);
 }
 
