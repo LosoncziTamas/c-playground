@@ -10,6 +10,29 @@ typedef uint32_t uint32;
 typedef int32_t int32;
 typedef int32 bool32;
 
+#define BUFSIZE 100
+
+static int buf[BUFSIZE];
+static int bufp = 0;
+
+int32 GetChar()
+{
+    int32 val = bufp > 0 ? buf[--bufp] : getchar();
+    return val;
+}
+
+void UngetChar(int32 c)
+{
+    if (bufp < BUFSIZE)
+    {
+        buf[bufp++] = c;
+    }
+    else 
+    {
+        printf("ungetch: too many characters\n");
+    }
+}
+
 void PrintInteger(int32 integer)
 {
     printf("%d\n", integer);
@@ -48,7 +71,6 @@ uint32 StringLengthSafe(const char* string, uint32 max)
 
     return result;
 }
-
 
 void StringConcat(const char* sourceA, uint32 sourceALen, const char* sourceB, uint32 sourceBLen, char* dest, uint32 destLen)
 {
