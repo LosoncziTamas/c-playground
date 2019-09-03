@@ -2,32 +2,37 @@
 #include <ctype.h>
 #include "../../utils/loso_utils.c"
 
-int32 GetInt32(int32* pn)
+int GetFloat(float* fp)
 {
     int32 c;
     while (isspace(c = GetChar()));
-    if (!isdigit(c) && c != EOF && c != '-' && c != '+')
+    if (!isdigit(c) && c != EOF && c != '+' && c != '-')
     {
         UngetChar(c);
         return 0;
     }
 
     int32 sign = c == '-' ? -1 : 1;
-    if (c == '+' || c == '-')
+    float i = 1.0f;
+    while (isdigit(c))
     {
+        *fp *= i;
+        *fp += c - '0';
+        i = 10.0f;
         c = GetChar();
     }
-    if (!isdigit(c))
+    if (c == '.')
     {
-        UngetChar(c);
-        return 0;
+        c = GetChar();
+        i = 0.1f;
+        while (isdigit(c))
+        {
+            *fp += (c - '0') * i;
+            i *= 0.1f;
+        }
     }
-    for (*pn = 0; isdigit(c); c = GetChar())
-    {
-        *pn = 10 * (*pn) +  (c - '0');
-    }
-    *pn *= sign;
-    if (c != EOF)
+    *fp *= sign;
+    if ( c != EOF)
     {
         UngetChar(c);
     }
@@ -36,8 +41,9 @@ int32 GetInt32(int32* pn)
 
 int main()
 {
-    int32 n, status;
-    while ((status = GetInt32(&n)) != EOF)
+    int32 status;
+    float f;
+    while ((status = GetFloat(&f)) != EOF)
     {
         if (status > 0)
         {
@@ -48,6 +54,6 @@ int main()
             PrintText("Not a number.");
             break;
         }
-        PrintInteger(n);
+        printf("%f ", f);
     }
 }
