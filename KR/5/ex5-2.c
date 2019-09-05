@@ -14,6 +14,7 @@ int GetFloat(float* fp)
 
     int32 sign = c == '-' ? -1 : 1;
     float i = 1.0f;
+    *fp = 0.0f;
     while (isdigit(c))
     {
         *fp *= i;
@@ -21,6 +22,7 @@ int GetFloat(float* fp)
         i = 10.0f;
         c = GetChar();
     }
+    // TODO: Fix
     if (c == '.')
     {
         c = GetChar();
@@ -54,6 +56,6 @@ int main()
             PrintText("Not a number.");
             break;
         }
-        printf("%f ", f);
+        printf("%f \n", f);
     }
 }
