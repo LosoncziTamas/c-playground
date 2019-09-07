@@ -40,6 +40,23 @@ char* ConcatStringSafe(char* dest, const char* source, uint32 n)
     return result;
 }
 
+int32 CompareStringSafe(const char* stringA, const char* stringB, uint32 n)
+{
+    int32 result = 0;
+    uint32 compareCount = 0;
+
+    result = *stringA - *stringB;
+    while(result == 0 && *stringA && compareCount < n)
+    {
+        stringA++;
+        stringB++;
+        result = *stringA - *stringB;
+        ++compareCount;
+    }
+
+    return result;
+}
+
 void TestCopyStringSafe()
 {
     char dest[10];
@@ -56,9 +73,18 @@ void TestConcatStringSafe()
     PrintCharArray(result, 10);
 }
 
+void TestCompareStringSafe()
+{
+    assert(CompareStringSafe("asd", "asd", 5) == 0);
+    assert(CompareStringSafe("asd", "asd4", 5) < 0);
+    assert(CompareStringSafe("asd4", "asd", 5) > 0);
+    //TODO:
+    assert(CompareStringSafe("12345AA", "12345BB", 5) == 0);
+}
+
 int main()
 {
     TestCopyStringSafe();
     TestConcatStringSafe();
-   //TODO: compare function 
+    TestCompareStringSafe();
 }
