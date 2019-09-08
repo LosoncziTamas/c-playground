@@ -43,7 +43,7 @@ char* ConcatStringSafe(char* dest, const char* source, uint32 n)
 int32 CompareStringSafe(const char* stringA, const char* stringB, uint32 n)
 {
     int32 result = 0;
-    uint32 compareCount = 0;
+    uint32 compareCount = 1;
 
     result = *stringA - *stringB;
     while(result == 0 && *stringA && compareCount < n)
