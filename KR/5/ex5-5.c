@@ -78,7 +78,6 @@ void TestCompareStringSafe()
     assert(CompareStringSafe("asd", "asd", 5) == 0);
     assert(CompareStringSafe("asd", "asd4", 5) < 0);
     assert(CompareStringSafe("asd4", "asd", 5) > 0);
-    //TODO:
     assert(CompareStringSafe("12345AA", "12345BB", 5) == 0);
 }
 
