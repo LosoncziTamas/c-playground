@@ -131,10 +131,84 @@ void TestInt32ToString()
     }
 }
 
+int32 StringIndex(const char* target, const char* str)
+{
+    const char* strStart = str;
+    const char* targetStart = target;
+
+    while (*target)
+    {
+        str = strStart;
+        const char* targetP = target;
+        while (*str && *targetP == *str)
+        {
+            str++;
+            targetP++;
+        }
+        if (str > strStart && *str == '\0')
+        {
+            return target - targetStart;
+        }
+        target++;
+    }
+
+    return -1;
+}
+
+void TestStringIndex()
+{
+    assert(StringIndex("12345", "34") == 2);
+    assert(StringIndex("12345", "-1") == -1);
+    assert(StringIndex("12345", "5") == 4);
+    assert(StringIndex("", "34") == -1);
+}
+
+int32 GetOperand(char* s)
+{
+    int32 c;
+
+    while ((*s = c = GetChar()) != ' ' || c != '\t');
+
+    *(++s) = '\0';
+    if (!isdigit(c) && c != '.')
+    {
+        return c;
+    }
+    if (isdigit(c))
+    {
+        while (isdigit(*(++s) = c = GetChar()));
+    }
+    if (c == '.')
+    {
+        while (isdigit(*(++s) = c = GetChar()));
+    }
+
+    *s = '\0';
+    if (c != EOF)
+    {
+        UngetChar(c);
+    }
+
+    return -1;
+}
+
+void TestGetOperand()
+{
+    //TODO: complete
+    char s[20];
+    int32 result;
+    while ((result = GetOperand(s)) != -1)
+    {   
+        PrintText(s);
+    }
+}
+
 int main()
 { 
     // TestGetLine();
     // TestReverseString();
     // TestStringToInt32();
     // TestInt32ToString();
+    // TestStringIndex();
+    TestGetOperand();
 }
