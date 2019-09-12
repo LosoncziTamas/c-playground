@@ -2,6 +2,10 @@
 #include <ctype.h>
 #include "../../utils/loso_utils.c"
 
+/*
+    Use pointers instead of array indexing.
+*/
+
 int32 GetLine(char *s, int32 lim)
 {
     int32 c;
@@ -163,17 +167,21 @@ void TestStringIndex()
     assert(StringIndex("", "34") == -1);
 }
 
+#define NUMBER '0'
+
 int32 GetOperand(char* s)
 {
     int32 c;
+    char* sStart = s;
 
-    while ((*s = c = GetChar()) != ' ' || c != '\t');
+    while ((*s = c = GetChar()) == ' ' || c == '\t');
 
     *(++s) = '\0';
     if (!isdigit(c) && c != '.')
     {
         return c;
     }
+    s = sStart;
     if (isdigit(c))
     {
         while (isdigit(*(++s) = c = GetChar()));
@@ -189,17 +197,21 @@ int32 GetOperand(char* s)
         UngetChar(c);
     }
 
-    return -1;
+    return NUMBER;
 }
 
 void TestGetOperand()
 {
-    //TODO: complete
     char s[20];
     int32 result;
-    while ((result = GetOperand(s)) != -1)
+
+    while ((result = GetOperand(s)) != EOF)
     {   
-        PrintText(s);
+        if (result == NUMBER)
+        {
+            int32 asInt32 = StringToInt32(s);
+            PrintInteger(asInt32);
+        }
     }
 }
 
@@ -210,5 +222,5 @@ int main()
     // TestStringToInt32();
     // TestInt32ToString();
     // TestStringIndex();
-    TestGetOperand();
+    // TestGetOperand();
 }
