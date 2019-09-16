@@ -45,13 +45,12 @@ int32 ReadLines(char **dest, uint32 maxLines, char* arr, int32 arrLen)
 
     while ((lineLength = GetLine(line, MAXLEN)) > 0)
     {
-        if (lineCount < maxLines && arrLen - arrP > lineLength)
+        if (lineCount < maxLines && arrLen - arrP > lineLength + 1)
         {
             char *p = arr + arrP;
-            arrP += lineLength;
-            // line[lineLength - 1] = '\0';
+            arrP += lineLength + 1;
             CopyString(p, line);
-            *(dest + lineCount) = p;
+            dest[lineCount] = p;
             ++lineCount;
         }
         else
@@ -65,31 +64,23 @@ int32 ReadLines(char **dest, uint32 maxLines, char* arr, int32 arrLen)
 
 void WriteLines(char **source, uint32 lineCount)
 {
-    while(lineCount > 0)
+    for (uint32 i = 0; i < lineCount; ++i)
     {
-        PrintText(*(source + lineCount));
-        lineCount--;
+        PrintText(source[i]);
     }
 }
 
 void QuickSort(char **source, uint32 left, uint32 right)
 {
-
+    //TODO: implement sorting
 }
 
 int main()
 {
-    /*char buff[100] = {0};
-    char buff2[100] = {0};
-    while (GetLine(buff, 100) > 0)
-    {
-        CopyString(buff2, buff);
-        PrintText(buff2);
-
-    }*/
     char arr[100];
     int32 lineCount = 0;
 
+    //TODO: measure performance and compare
     if ((lineCount = ReadLines(lines, MAXLINES, arr, 100)) >= 0)
     {
         QuickSort(lines, 0, lineCount - 1);
