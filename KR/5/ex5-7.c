@@ -70,9 +70,47 @@ void WriteLines(char **source, uint32 lineCount)
     }
 }
 
+/*
+    Interchange source[i] and source[j]
+*/
+
+void Swap(char** source, uint32 i, uint32 j)
+{
+    char* tmp = source[i];
+    source[i] = source[j];
+    source[j] = tmp;
+}
+
+int32 CompareString(const char* strA, const char* strB)
+{
+    int32 result = *strA - *strB;
+
+    while (result == 0 && *strA && *strB)
+    {
+        result = *(++strA) - *(++strB);
+    }
+
+    return result;
+}
+
 void QuickSort(char **source, uint32 left, uint32 right)
 {
-    //TODO: implement sorting
+    if (left >= right)
+    {
+        return;
+    }
+    uint32 last = left;
+    Swap(source, left, (left + right) / 2);
+    for (uint32 i = left + 1; i <= right; ++i)
+    {
+        if (CompareString(source[i], source[left]) < 0)
+        {
+            Swap(source, ++last, i);
+        }
+    }
+    Swap(source, left, last);
+    QuickSort(source, left, last);
+    QuickSort(source, last + 1, right);
 }
 
 int main()
@@ -92,5 +130,4 @@ int main()
         PrintText("Error: input too big to sort.");
         return 1;
     }
-
 }
