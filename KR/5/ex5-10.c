@@ -5,8 +5,9 @@ bool IsNumber(const char* string)
 {
     uint32 charIndex = 0;
     char c = string[charIndex];
+    uint32 len = StringLength(string);
 
-    if (c == '-')
+    if (c == '-' && len > 1)
     {
         c = string[++charIndex];
     }
@@ -16,7 +17,7 @@ bool IsNumber(const char* string)
         c = string[++charIndex];
     }
 
-    if (c == '.')
+    if (c == '.' && len > 2)
     {
         c = string[++charIndex];
     }
@@ -35,22 +36,15 @@ void TestIsNumber()
     assert(IsNumber("-123"));
     assert(IsNumber("-1.23"));
     assert(!IsNumber("Hello"));
+    assert(!IsNumber("-"));
+    assert(!IsNumber("."));
+    assert(!IsNumber(".."));
+    assert(!IsNumber(".-"));
+    assert(!IsNumber("-."));
 }
 
 float StringToFloat(const char* string)
 {
-/*
-    int32 charIndex = 0;
-    char c = string[charIndex];
-
-    int32 sign = c == '-' ? -1 : 1;
-    if (sign < 0)
-    {
-        c = string[++charIndex];
-    }
-
-    while ()
-*/
     //TODO: implement
     return (float)atof(string);
 }
@@ -87,8 +81,6 @@ float Pop()
 
 int main(int argCount, char **args)
 {
-    //TODO: trim args?
-    //TODO: fix invalid result
     for (uint32 argIndex = 1; argIndex < argCount; ++argIndex)
     {
         char *arg = args[argIndex];
@@ -106,8 +98,24 @@ int main(int argCount, char **args)
             float operand = Pop();
             Push(Pop() - operand);
         }
-        // TODO: other operands
+        else if (StringsAreEqual(arg, "*"))
+        {
+            Push(Pop() * Pop());
+        }
+        else if (StringsAreEqual(arg, "/"))
+        {
+            float operand = Pop();
+            if (operand != 0)
+            {
+                Push(Pop() / operand);
+            }
+            else
+            {
+                PrintText("ERROR: division by zero");
+                break;
+            }
+        }
     }
 
-    printf("\t%8g", Pop());
+    printf("\t%f", Pop());
 }
