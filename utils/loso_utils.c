@@ -135,3 +135,11 @@ void PrintCharArray(char* array, uint32 count)
     }
 }
 
+void CopyString(char* dest, const char* source)
+{
+    while (*source)
+    {
+        *(dest++) = *(source++);
+    }
+    *dest = '\0';
+}

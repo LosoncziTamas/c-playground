@@ -1,7 +1,9 @@
 #include "../../utils/loso_utils.c"
 
 #define TAB_WIDTH 8
-#define COLUMN_COUNT 5
+#define MAX_ARGS 2
+#define FILENAME_LEN 64
+#define MESSAGE_LEN 64
 
 void PrintBlanksOptimally(int blankCount, int blankStart)
 {
@@ -27,7 +29,7 @@ void PrintBlanksOptimally(int blankCount, int blankStart)
     }
 }
 
-void Entab()
+void Entab(uint32 tabWidth)
 {
     for(int c = getchar(), blankCount = 0, charPerLine = 0; c != EOF; c = getchar())
     {
@@ -55,7 +57,39 @@ void Entab()
     }
 }
 
+typedef struct ParsedArgs
+{
+    uint32 tabStopCount;
+    uint32 tabsStop[MAX_ARGS];
+    char fileName[FILENAME_LEN];
+    char message[MESSAGE_LEN];
+} ParsedArgs;
+
+int32 ParseArgs(int argCount, char **args, ParsedArgs *parsedArgs)
+{
+    if (argCount > 1)
+    {
+
+    }
+    else
+    {
+        CopyString(parsedArgs->message, "Invalid argument count.");
+        return -1;
+    }
+
+}
+
 int main(int argCount, char **args)
 {
-    Entab();
+    ParsedArgs parsedArgs = {0};
+    
+    if (ParseArgs(argCount, args, &parsedArgs) > 0)
+    {
+        
+    }
+    else
+    {
+        PrintText(parsedArgs.message);
+    }
+    
 }
