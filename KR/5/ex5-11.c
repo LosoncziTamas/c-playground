@@ -1,9 +1,11 @@
 #include "../../utils/loso_utils.c"
 
 #define TAB_WIDTH 8
-#define MAX_ARGS 2
+#define MAX_TABSTOP 2
 #define FILENAME_LEN 64
 #define MESSAGE_LEN 64
+#define TAB_ARGS_START_INDEX 2
+
 
 void PrintBlanksOptimally(int blankCount, int blankStart)
 {
@@ -60,16 +62,56 @@ void Entab(uint32 tabWidth)
 typedef struct ParsedArgs
 {
     uint32 tabStopCount;
-    uint32 tabsStop[MAX_ARGS];
+    uint32 tabStops[MAX_TABSTOP];
     char fileName[FILENAME_LEN];
     char message[MESSAGE_LEN];
 } ParsedArgs;
+
+int32 StringToInt32(const char* string)
+{
+    int32 result = atoi(string);
+    return result;
+}
 
 int32 ParseArgs(int argCount, char **args, ParsedArgs *parsedArgs)
 {
     if (argCount > 1)
     {
+        char* fileName = args[1];
+        if (StringLength(fileName) < FILENAME_LEN)
+        {
+            CopyString(parsedArgs->fileName, fileName);
+        }
+        else
+        {
+            CopyString(parsedArgs->message, "Invalid filename.");
+            return -1;
+        }
 
+        PrintInteger(argCount);
+        if (argCount - TAB_ARGS_START_INDEX <= MAX_TABSTOP)
+        {
+            uint32 argIndex;
+            for (argIndex = TAB_ARGS_START_INDEX; argIndex < argCount; ++argIndex)
+            {
+                int32 tabStop = StringToInt32(args[argIndex]);
+                if (tabStop > 0) 
+                {
+                    parsedArgs->tabStops[argIndex - TAB_ARGS_START_INDEX] = tabStop;
+                }
+                else
+                {
+                    CopyString(parsedArgs->message, "Invalid tab stop value.");
+                    return -1;
+                }
+            }
+            parsedArgs->tabStopCount = argCount - TAB_ARGS_START_INDEX;
+        }
+        else
+        {
+            CopyString(parsedArgs->message, "Invalid tab stop count.");
+            return -1;
+        }
     }
     else
     {
@@ -77,6 +119,13 @@ int32 ParseArgs(int argCount, char **args, ParsedArgs *parsedArgs)
         return -1;
     }
 
+    PrintInteger(parsedArgs->tabStopCount);
+    return parsedArgs->tabStopCount;
+}
+
+void ReadFile()
+{
+    //TODO: read file
 }
 
 int main(int argCount, char **args)
@@ -85,11 +134,13 @@ int main(int argCount, char **args)
     
     if (ParseArgs(argCount, args, &parsedArgs) > 0)
     {
-        
+        PrintText(parsedArgs.fileName);
+        PrintIntegerArray(parsedArgs.tabStops, parsedArgs.tabStopCount);
+
     }
     else
     {
         PrintText(parsedArgs.message);
+        PrintText("Usage: <filename> <tabstop1> <tabstop2> ...");
     }
-    
 }
