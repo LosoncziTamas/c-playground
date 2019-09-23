@@ -6,7 +6,6 @@
 #define MESSAGE_LEN 64
 #define TAB_ARGS_START_INDEX 2
 
-
 void PrintBlanksOptimally(int blankCount, int blankStart)
 {
     int toNextStop = TAB_WIDTH - (blankStart % TAB_WIDTH);
@@ -123,20 +122,55 @@ int32 ParseArgs(int argCount, char **args, ParsedArgs *parsedArgs)
     return parsedArgs->tabStopCount;
 }
 
-void ReadFile()
+void ReadFile(const char* fileName, char* fileBuff, uint32 buffLen)
 {
-    //TODO: read file
+    FILE* file = fopen(fileName, "r");
+    if (file)
+    {
+        if (fseek(file, 0, SEEK_END) == 0)
+        {
+            int32 contentLength = ftell(file);
+            if (contentLength > 0)
+            {   
+                if (buffLen < contentLength)
+                {
+                    //TODO: error
+                    return;
+                }
+                rewind(file);
+                int32 readSize = fread(fileBuff, sizeof(char), contentLength, file);
+                if (readSize != contentLength)
+                {
+                    //TODO: error
+                }
+            }
+            else
+            {
+                //TODO: error
+            }
+        }
+        else
+        {
+            //TODO: error
+        }
+    }
+    else
+    {
+        //TODO: error
+    }
 }
 
 int main(int argCount, char **args)
 {
     ParsedArgs parsedArgs = {0};
+    char fileContent[1024] = {0};
     
     if (ParseArgs(argCount, args, &parsedArgs) > 0)
     {
         PrintText(parsedArgs.fileName);
         PrintIntegerArray(parsedArgs.tabStops, parsedArgs.tabStopCount);
-
+        ReadFile(parsedArgs.fileName, fileContent, ArrayCount(fileContent));
+        PrintCharArray(fileContent, ArrayCount(fileContent));
     }
     else
     {
