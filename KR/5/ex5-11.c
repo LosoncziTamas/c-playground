@@ -30,10 +30,14 @@ void PrintBlanksOptimally(int blankCount, int blankStart)
     }
 }
 
-void Entab(uint32 tabWidth)
+void Entab(uint32 tabWidth, const char* source, uint32 sourceLength, char* dest, uint32 destLength)
 {
-    for(int c = getchar(), blankCount = 0, charPerLine = 0; c != EOF; c = getchar())
+    uint32 blankCount = 0;
+    uint32 charPerLine = 0;
+
+    for(uint32 charIndex = 0; charIndex < sourceLength; ++charIndex)
     {
+        char c = *(source + charIndex);
         if (c == ' ')
         {
             blankCount++;
@@ -52,7 +56,8 @@ void Entab(uint32 tabWidth)
                 PrintBlanksOptimally(blankCount, charPerLine - blankCount);
                 blankCount = 0;
             }
-            putchar(c);
+            *(dest++) = c;
+            //TODO: check dest bounds
             charPerLine = c == '\n' ? 0 : charPerLine + 1;
         }
     }
@@ -122,7 +127,7 @@ int32 ParseArgs(int argCount, char **args, ParsedArgs *parsedArgs)
     return parsedArgs->tabStopCount;
 }
 
-void ReadFile(const char* fileName, char* fileBuff, uint32 buffLen)
+int32 ReadFile(const char* fileName, char* dest, uint32 destLength)
 {
     FILE* file = fopen(fileName, "r");
     if (file)
@@ -132,45 +137,50 @@ void ReadFile(const char* fileName, char* fileBuff, uint32 buffLen)
             int32 contentLength = ftell(file);
             if (contentLength > 0)
             {   
-                if (buffLen < contentLength)
-                {
-                    //TODO: error
-                    return;
-                }
                 rewind(file);
-                int32 readSize = fread(fileBuff, sizeof(char), contentLength, file);
-                if (readSize != contentLength)
+                if (destLength < contentLength)
                 {
-                    //TODO: error
+                    return - 1;
+                }
+                int32 readSize = fread(dest, sizeof(char), contentLength, file);
+                fclose(file);
+                if (readSize == contentLength)
+                {
+                    return readSize;
                 }
             }
-            else
-            {
-                //TODO: error
-            }
-        }
-        else
-        {
-            //TODO: error
         }
     }
-    else
+    return -1;
+}
+
+int32 WriteFile(const char* fileName, const char* source, uint32 sourceLength)
+{
+    FILE* fileToWrite = fopen(fileName, "w");
+    if (fileToWrite)
     {
-        //TODO: error
+        uint32 writeCount = fwrite(source, sizeof(char), sourceLength, fileToWrite);
+        fclose(fileToWrite);
+        if (writeCount == sourceLength)
+        {
+            return writeCount;
+        }
+        return -1;
     }
+    return -1;
 }
 
 int main(int argCount, char **args)
 {
     ParsedArgs parsedArgs = {0};
     char fileContent[1024] = {0};
+    char writeBuffer[1024] = {0};
     
     if (ParseArgs(argCount, args, &parsedArgs) > 0)
     {
-        PrintText(parsedArgs.fileName);
-        PrintIntegerArray(parsedArgs.tabStops, parsedArgs.tabStopCount);
         ReadFile(parsedArgs.fileName, fileContent, ArrayCount(fileContent));
-        PrintCharArray(fileContent, ArrayCount(fileContent));
+        Entab(parsedArgs.tabStops[0], fileContent, ArrayCount(fileContent), writeBuffer, ArrayCount(writeBuffer));
+        WriteFile("output", writeBuffer, ArrayCount(writeBuffer));
     }
     else
     {
