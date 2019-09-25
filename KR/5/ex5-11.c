@@ -35,7 +35,7 @@ void Entab(uint32 tabWidth, const char* source, uint32 sourceLength, char* dest,
     uint32 blankCount = 0;
     uint32 charPerLine = 0;
 
-    for(uint32 charIndex = 0; charIndex < sourceLength; ++charIndex)
+    for (uint32 charIndex = 0; charIndex < sourceLength; ++charIndex)
     {
         char c = *(source + charIndex);
         if (c == ' ')
@@ -170,17 +170,50 @@ int32 WriteFile(const char* fileName, const char* source, uint32 sourceLength)
     return -1;
 }
 
+bool SameFileContent(const char* fileA, const char* fileB)
+{
+    char buffA[1024] = {0};
+    char buffB[1024] = {0};
+    int32 aLen = ReadFile(fileA, buffA, ArrayCount(buffA));
+    int32 bLen = ReadFile(fileB, buffB, ArrayCount(buffB));
+
+    if (aLen > 0 && aLen == bLen)
+    {
+        for (uint32 byteIndex = 0; byteIndex < aLen; ++byteIndex)
+        {
+            if (buffA[byteIndex] != buffB[byteIndex])
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    return false;
+}
+
 int main(int argCount, char **args)
 {
+    const char* outputName = "output";
     ParsedArgs parsedArgs = {0};
     char fileContent[1024] = {0};
     char writeBuffer[1024] = {0};
     
     if (ParseArgs(argCount, args, &parsedArgs) > 0)
     {
-        ReadFile(parsedArgs.fileName, fileContent, ArrayCount(fileContent));
+        //TODO: do the bound check here, rework API
+        int32 contentLength = ReadFile(parsedArgs.fileName, fileContent, ArrayCount(fileContent));
         Entab(parsedArgs.tabStops[0], fileContent, ArrayCount(fileContent), writeBuffer, ArrayCount(writeBuffer));
-        WriteFile("output", writeBuffer, ArrayCount(writeBuffer));
+        WriteFile(outputName, writeBuffer, ArrayCount(writeBuffer));
+        if (SameFileContent(outputName, parsedArgs.fileName))
+        {
+            PrintText("Same file");
+        }
+        else
+        {
+            PrintText("Different files");
+        }
+        
     }
     else
     {
