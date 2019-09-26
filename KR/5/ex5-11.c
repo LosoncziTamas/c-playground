@@ -11,6 +11,7 @@ void PrintBlanksOptimally(int blankCount, int blankStart)
     int toNextStop = TAB_WIDTH - (blankStart % TAB_WIDTH);
 
     // move to next tab stop
+    // TODO: check this guy, replace putchar
     if (blankCount >= toNextStop)
     {
         putchar('\t');
@@ -30,7 +31,7 @@ void PrintBlanksOptimally(int blankCount, int blankStart)
     }
 }
 
-void Entab(uint32 tabWidth, const char* source, uint32 sourceLength, char* dest, uint32 destLength)
+void Entab(uint32 tabWidth, const char* source, uint32 sourceLength, char* dest)
 {
     uint32 blankCount = 0;
     uint32 charPerLine = 0;
@@ -201,19 +202,25 @@ int main(int argCount, char **args)
     
     if (ParseArgs(argCount, args, &parsedArgs) > 0)
     {
-        //TODO: do the bound check here, rework API
+        //TODO: util for printing error/assertion, using console coloring
         int32 contentLength = ReadFile(parsedArgs.fileName, fileContent, ArrayCount(fileContent));
-        Entab(parsedArgs.tabStops[0], fileContent, ArrayCount(fileContent), writeBuffer, ArrayCount(writeBuffer));
-        WriteFile(outputName, writeBuffer, ArrayCount(writeBuffer));
-        if (SameFileContent(outputName, parsedArgs.fileName))
+        if (contentLength > 0 && contentLength < ArrayCount(writeBuffer))
         {
-            PrintText("Same file");
+            Entab(parsedArgs.tabStops[0], fileContent, contentLength, writeBuffer);
+            WriteFile(outputName, writeBuffer, ArrayCount(writeBuffer));
+            if (SameFileContent(outputName, parsedArgs.fileName))
+            {
+                PrintText("Same file");
+            }
+            else
+            {
+                PrintText("Different files");
+            }
         }
         else
         {
-            PrintText("Different files");
+            PrintText("Buffer size is too small");
         }
-        
     }
     else
     {
