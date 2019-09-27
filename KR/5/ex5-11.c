@@ -6,15 +6,17 @@
 #define MESSAGE_LEN 64
 #define TAB_ARGS_START_INDEX 2
 
-void PrintBlanksOptimally(int blankCount, int blankStart)
+// TODO: use length for bound checking
+// TODO: fix logic
+// TODO: fix length difference in files
+void PrintBlanksOptimally(int blankCount, int blankStart, char* dest, uint32 destLength)
 {
     int toNextStop = TAB_WIDTH - (blankStart % TAB_WIDTH);
 
-    // move to next tab stop
-    // TODO: check this guy, replace putchar
+    // Move to next tab stop.
     if (blankCount >= toNextStop)
     {
-        putchar('\t');
+        *(dest++) = '\t';
         blankCount -= toNextStop;
     }
 
@@ -23,15 +25,15 @@ void PrintBlanksOptimally(int blankCount, int blankStart)
 
     for (int i = 0; i < tabCount; ++i)
     {
-        putchar('\t');
+        *(dest++) = '\t';
     }
     for (int i = 0; i < spaceCount; ++i)
     {
-        putchar(' ');
+        *(dest++) = ' ';
     }
 }
 
-void Entab(uint32 tabWidth, const char* source, uint32 sourceLength, char* dest)
+void Entab(uint32 tabWidth, const char* source, uint32 sourceLength, char* dest, uint32 destLength)
 {
     uint32 blankCount = 0;
     uint32 charPerLine = 0;
@@ -54,11 +56,10 @@ void Entab(uint32 tabWidth, const char* source, uint32 sourceLength, char* dest)
         {
             if (blankCount > 0)
             {
-                PrintBlanksOptimally(blankCount, charPerLine - blankCount);
+                PrintBlanksOptimally(blankCount, charPerLine - blankCount, dest, destLength);
                 blankCount = 0;
             }
             *(dest++) = c;
-            //TODO: check dest bounds
             charPerLine = c == '\n' ? 0 : charPerLine + 1;
         }
     }
@@ -93,7 +94,6 @@ int32 ParseArgs(int argCount, char **args, ParsedArgs *parsedArgs)
             return -1;
         }
 
-        PrintInteger(argCount);
         if (argCount - TAB_ARGS_START_INDEX <= MAX_TABSTOP)
         {
             uint32 argIndex;
@@ -193,21 +193,22 @@ bool SameFileContent(const char* fileA, const char* fileB)
     return false;
 }
 
+// TODO: util for printing error/assertion, using console coloring
 int main(int argCount, char **args)
 {
     const char* outputName = "output";
     ParsedArgs parsedArgs = {0};
-    char fileContent[1024] = {0};
-    char writeBuffer[1024] = {0};
     
     if (ParseArgs(argCount, args, &parsedArgs) > 0)
     {
-        //TODO: util for printing error/assertion, using console coloring
-        int32 contentLength = ReadFile(parsedArgs.fileName, fileContent, ArrayCount(fileContent));
+        char readBuffer[1024] = {0};
+        char writeBuffer[1024] = {0};
+        int32 contentLength = ReadFile(parsedArgs.fileName, readBuffer, ArrayCount(readBuffer));
+
         if (contentLength > 0 && contentLength < ArrayCount(writeBuffer))
         {
-            Entab(parsedArgs.tabStops[0], fileContent, contentLength, writeBuffer);
-            WriteFile(outputName, writeBuffer, ArrayCount(writeBuffer));
+            Entab(parsedArgs.tabStops[0], readBuffer, contentLength, writeBuffer, ArrayCount(writeBuffer));
+            WriteFile(outputName, writeBuffer, contentLength);
             if (SameFileContent(outputName, parsedArgs.fileName))
             {
                 PrintText("Same file");
