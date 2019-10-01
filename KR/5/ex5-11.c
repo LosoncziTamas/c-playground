@@ -6,8 +6,6 @@
 #define MESSAGE_LEN 64
 #define TAB_ARGS_START_INDEX 2
 
-//TODO: fix counting logic
-
 uint32 WriteBlanks(int blankCount, int blankStart, char* dest)
 {
     uint32 writtenCount = 0;
@@ -37,11 +35,11 @@ uint32 WriteBlanks(int blankCount, int blankStart, char* dest)
     return writtenCount;
 }
 
-uint32 Entab(uint32 tabWidth, const char* source, uint32 sourceLength, char* dest)
+int32 Entab(uint32 tabWidth, const char* source, uint32 sourceLength, char* dest)
 {
     uint32 blankCount = 0;
     uint32 charPerLine = 0;
-    uint32 destLength = 0;
+    const char* destStart = dest;
 
     for (uint32 charIndex = 0; charIndex < sourceLength; ++charIndex)
     {
@@ -61,18 +59,16 @@ uint32 Entab(uint32 tabWidth, const char* source, uint32 sourceLength, char* des
         {
             if (blankCount > 0)
             {
-                destLength += WriteBlanks(blankCount, charPerLine - blankCount, dest);
+                WriteBlanks(blankCount, charPerLine - blankCount, dest);
                 blankCount = 0;
                 dest++;
             }
             *(dest++) = c;
-            destLength++;
             charPerLine = c == '\n' ? 0 : charPerLine + 1;
         }
     }
-    PrintText("dest len");
-    PrintInteger(destLength);
-    return destLength;
+
+    return dest - destStart;
 }
 
 typedef struct ParsedArgs
@@ -207,7 +203,7 @@ bool SameFileContent(const char* fileA, const char* fileB)
 // TODO: util for printing error/assertion, using console coloring
 int main(int argCount, char **args)
 {
-    const char* outputName = "output";
+    const char* outputName = "output.txt";
     ParsedArgs parsedArgs = {0};
     
     if (ParseArgs(argCount, args, &parsedArgs) > 0)
@@ -218,8 +214,8 @@ int main(int argCount, char **args)
 
         if (contentLength > 0 && contentLength < ArrayCount(writeBuffer))
         {
-            Entab(parsedArgs.tabStops[0], readBuffer, contentLength, writeBuffer);
-            WriteFile(outputName, writeBuffer, contentLength);
+            int32 destLen = Entab(parsedArgs.tabStops[0], readBuffer, contentLength, writeBuffer);
+            WriteFile(outputName, writeBuffer, destLen);
             if (SameFileContent(outputName, parsedArgs.fileName))
             {
                 PrintText("Same file");
