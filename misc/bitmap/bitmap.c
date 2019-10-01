@@ -1,6 +1,18 @@
 #include <stdio.h>
 
+#define BI_RGB              0
+#define BI_RLE8             1
+#define BI_RLE4             2
+#define BI_BITFIELDS        3
+#define BI_JPEG             4
+#define BI_PNG              5
+#define BI_ALPHABITFIELDS   6
+#define BI_CMYK             11
+#define BI_CMYKRLE8         12
+#define BI_CMYKRLE4         13
+
 #define BUFF_SIZE 1024
+
 #define ArrayCount(x) (sizeof(x) / sizeof(x[0]))
 
 typedef enum LoadError
@@ -13,7 +25,7 @@ typedef enum LoadError
 
 struct ErrorDesc 
 {
-    int code;
+    LoadError code;
     char* message;
 } errorDesc[] = {
     {SUCCESS, "No error."},
@@ -28,12 +40,35 @@ typedef struct Buffer
     int elementCount;
 } Buffer;
 
+typedef struct FileHeader
+{
+    char headerField[2];
+    unsigned int bitmapSize;
+    char reserved[4];
+    unsigned int offset;
+} __attribute__((packed)) FileHeader;
 
-//TODO: add bitmap header
+typedef struct DIBHeader
+{
+    unsigned int headerSize;
+    unsigned int bitmapWidth;
+    unsigned int bitmapHeight;
+    unsigned short colorPlaneCount;
+    unsigned short bitsPerPixel;
+    unsigned int compressionMethod;
+    unsigned int imageSize;
+    int horizontalResolution;
+    int verticalResolution;
+    unsigned int colorPaletteColorCount;
+    unsigned int importantColors;
+} __attribute__((packed)) DIBHeader;
+
+// TODO: complete bitmap
 typedef struct Bitmap
 {
-    char placeholder;
-} Bitmap;
+    FileHeader fileHeader;
+    DIBHeader dibHeader;
+} __attribute__((packed)) Bitmap;
 
 LoadError LoadBitmap(const char* path, Buffer* buffer)
 {
@@ -92,34 +127,17 @@ int ParseArgs(int argCount, char **args)
 int main(int argCount, char **args)
 {
     Buffer memory = {0};
-    int result = LoadBitmap("bitmap_test.bmp", &memory);
+    LoadError result = LoadBitmap("bitmap_test.bmp", &memory);
     if (result == SUCCESS)
     {
-
-        for (int i = 0; i < memory.elementCount; ++i)
-        {
-            printf("%d ", memory.data[i]);
-        }
+        // TODO: copy memory
+        Bitmap* bitmap = (Bitmap*)memory.data;
+        printf("height: %d  ", bitmap->dibHeader.bitmapHeight);
+        printf("width: %d \n", bitmap->dibHeader.bitmapWidth);
     }
     else
     {
         PrintError(result);
     }
-    
-    /*
-    for (int rowIndex = 0; rowIndex < Image.height; ++rowIndex)
-    {
-        for (int columnIndex = 0; columnIndex < Image.width; ++columnIndex)
-        {
-            int pixelStartIndex = Image.width * rowIndex * Image.bytesPerPixel + Image.height * columnIndex * Image.bytesPerPixel; 
-            
-            unsigned int r = Image.pixelData[pixelStartIndex];
-            unsigned int g = Image.pixelData[pixelStartIndex + 1];
-            unsigned int b = Image.pixelData[pixelStartIndex + 2];
-
-            printf("r:%u g:%u b:%u \n", r, g, b);
-        }
-        printf("\n");
-    }*/
     return 0;
 }
