@@ -25,7 +25,15 @@ struct ErrorDesc
 typedef struct Buffer
 {
     char data[BUFF_SIZE];
+    int elementCount;
 } Buffer;
+
+
+//TODO: add bitmap header
+typedef struct Bitmap
+{
+    char placeholder;
+} Bitmap;
 
 LoadError LoadBitmap(const char* path, Buffer* buffer)
 {
@@ -54,7 +62,7 @@ LoadError LoadBitmap(const char* path, Buffer* buffer)
     {
         return READ_ERROR;
     }
-
+    buffer->elementCount = elementCount;
     fclose(file);
 
     return SUCCESS;
@@ -84,10 +92,14 @@ int ParseArgs(int argCount, char **args)
 int main(int argCount, char **args)
 {
     Buffer memory = {0};
-    int result = LoadBitmap("bitmap_test", &memory);
+    int result = LoadBitmap("bitmap_test.bmp", &memory);
     if (result == SUCCESS)
     {
-        
+
+        for (int i = 0; i < memory.elementCount; ++i)
+        {
+            printf("%d ", memory.data[i]);
+        }
     }
     else
     {
