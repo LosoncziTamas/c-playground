@@ -6,37 +6,42 @@
 #define MESSAGE_LEN 64
 #define TAB_ARGS_START_INDEX 2
 
-// TODO: use length for bound checking
-// TODO: fix logic
-// TODO: fix length difference in files
-void PrintBlanksOptimally(int blankCount, int blankStart, char* dest, uint32 destLength)
+//TODO: fix counting logic
+
+uint32 WriteBlanks(int blankCount, int blankStart, char* dest)
 {
-    int toNextStop = TAB_WIDTH - (blankStart % TAB_WIDTH);
+    uint32 writtenCount = 0;
+    uint32 toNextStop = TAB_WIDTH - (blankStart % TAB_WIDTH);
 
     // Move to next tab stop.
     if (blankCount >= toNextStop)
     {
         *(dest++) = '\t';
         blankCount -= toNextStop;
+        writtenCount++;
     }
 
-    int tabCount = blankCount / TAB_WIDTH;
-    int spaceCount = blankCount % TAB_WIDTH;
+    uint32 tabCount = blankCount / TAB_WIDTH;
+    uint32 spaceCount = blankCount % TAB_WIDTH;
 
-    for (int i = 0; i < tabCount; ++i)
+    for (uint32 i = 0; i < tabCount; ++i)
     {
         *(dest++) = '\t';
     }
-    for (int i = 0; i < spaceCount; ++i)
+    for (uint32 i = 0; i < spaceCount; ++i)
     {
         *(dest++) = ' ';
     }
+    writtenCount += tabCount + spaceCount;
+
+    return writtenCount;
 }
 
-void Entab(uint32 tabWidth, const char* source, uint32 sourceLength, char* dest, uint32 destLength)
+uint32 Entab(uint32 tabWidth, const char* source, uint32 sourceLength, char* dest)
 {
     uint32 blankCount = 0;
     uint32 charPerLine = 0;
+    uint32 destLength = 0;
 
     for (uint32 charIndex = 0; charIndex < sourceLength; ++charIndex)
     {
@@ -56,13 +61,18 @@ void Entab(uint32 tabWidth, const char* source, uint32 sourceLength, char* dest,
         {
             if (blankCount > 0)
             {
-                PrintBlanksOptimally(blankCount, charPerLine - blankCount, dest, destLength);
+                destLength += WriteBlanks(blankCount, charPerLine - blankCount, dest);
                 blankCount = 0;
+                dest++;
             }
             *(dest++) = c;
+            destLength++;
             charPerLine = c == '\n' ? 0 : charPerLine + 1;
         }
     }
+    PrintText("dest len");
+    PrintInteger(destLength);
+    return destLength;
 }
 
 typedef struct ParsedArgs
@@ -162,6 +172,7 @@ int32 WriteFile(const char* fileName, const char* source, uint32 sourceLength)
     {
         uint32 writeCount = fwrite(source, sizeof(char), sourceLength, fileToWrite);
         fclose(fileToWrite);
+        PrintInteger(writeCount);
         if (writeCount == sourceLength)
         {
             return writeCount;
@@ -207,7 +218,7 @@ int main(int argCount, char **args)
 
         if (contentLength > 0 && contentLength < ArrayCount(writeBuffer))
         {
-            Entab(parsedArgs.tabStops[0], readBuffer, contentLength, writeBuffer, ArrayCount(writeBuffer));
+            Entab(parsedArgs.tabStops[0], readBuffer, contentLength, writeBuffer);
             WriteFile(outputName, writeBuffer, contentLength);
             if (SameFileContent(outputName, parsedArgs.fileName))
             {
