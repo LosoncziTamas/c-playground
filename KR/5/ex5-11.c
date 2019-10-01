@@ -6,6 +6,21 @@
 #define MESSAGE_LEN 64
 #define TAB_ARGS_START_INDEX 2
 
+typedef enum ErrorCode
+{
+    SUCCESS = 0,
+    FILE_LOAD_ERROR = -1
+} ErrorCode;
+
+struct ErrorDesc
+{
+    ErrorCode err;
+    const char* desc;
+} errorDesc [] = 
+{
+    {SUCCESS, ""}
+};
+
 uint32 WriteBlanks(int blankCount, int blankStart, char* dest)
 {
     uint32 writtenCount = 0;
