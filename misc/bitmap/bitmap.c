@@ -33,7 +33,7 @@ typedef struct Buffer
 
 LoadError LoadBitmap(const char* path, Buffer* buffer)
 {
-    // TODO: load header first
+    // TODO: load header first, use offset to locate pixel data
     FILE* file = fopen(path, "r");
 
     if (!file)
@@ -92,6 +92,7 @@ void PrintBitmapHeader(BitmapHeader* header)
     }
 }
 
+// TODO: add mask for extrcting color values
 int main(int argCount, char **args)
 {
     Buffer memory = {0};
@@ -105,14 +106,14 @@ int main(int argCount, char **args)
         
         PrintBitmapHeader(header);
 
-        int pixelCount = w * h;
         int bytesPerPixel = header->bitsPerPixel / 8;
-        unsigned char *pixelStorage = memory.data + sizeof(header);
-        int dataCount = memory.elementCount - sizeof(BitmapHeader);
+        unsigned char *pixelStorage = memory.data + header->offset;
+        int pixelDataCount = memory.elementCount - header->offset;
 
-        for (int dataIndex = 0; dataIndex < dataCount; ++dataIndex)
+        for (int dataIndex = 0; dataIndex < pixelDataCount; ++dataIndex)
         {
-            printf("%d ", *(pixelStorage + dataIndex));
+            unsigned char data = pixelStorage[dataIndex];
+            printf("%d ", data);
         }
     }
     else
