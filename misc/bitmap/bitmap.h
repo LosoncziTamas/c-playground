@@ -12,20 +12,36 @@
 #define BI_CMYKRLE8         12
 #define BI_CMYKRLE4         13
 
-#if __APPLE__
-    typedef struct FileHeader
+static const struct 
+{
+    unsigned int code;
+    const char* description;
+} CompressionMethods[] = 
+{
+    {BI_RGB, "None"},
+    {BI_RLE8, "RLE 8-bit/pixel"},
+    {BI_RLE4, "RLE 4-bit/pixel"},
+    {BI_BITFIELDS, "Huffman 1D"},
+    {BI_JPEG, "JPEG image for printing"},
+    {BI_PNG, "PNG image for printing"},
+    {BI_ALPHABITFIELDS, "RGBA bit field masks"},
+    {BI_CMYK, "None"},
+    {BI_CMYKRLE8, "RLE-8"},
+    {BI_CMYKRLE4, "RLE-4"},
+};
+
+#if _WIN32
+    #pragma pack(push, 1)
+#endif
+    typedef struct BitmapHeader
     {
         char headerField[2];
         unsigned int bitmapSize;
         char reserved[4];
         unsigned int offset;
-    } __attribute__((packed)) FileHeader;
-
-    typedef struct DIBHeader
-    {
         unsigned int headerSize;
-        unsigned int bitmapWidth;
-        unsigned int bitmapHeight;
+        int bitmapWidth;
+        int bitmapHeight;
         unsigned short colorPlaneCount;
         unsigned short bitsPerPixel;
         unsigned int compressionMethod;
@@ -33,52 +49,12 @@
         int horizontalResolution;
         int verticalResolution;
         unsigned int colorPaletteColorCount;
-        unsigned int importantColors;
-    } __attribute__((packed)) DIBHeader;
-
-    // TODO: complete bitmap
-    typedef struct Bitmap
-    {
-        FileHeader fileHeader;
-        DIBHeader dibHeader;
-    } __attribute__((packed)) Bitmap;
+        unsigned int importantColors;        
+    }
+#if __APPLE__ 
+    __attribute__((packed)) BitmapHeader;
 #elif _WIN32
-
-    #pragma pack(push, 1)
-    typedef struct FileHeader
-    {
-        char headerField[2];
-        unsigned int bitmapSize;
-        char reserved[4];
-        unsigned int offset;
-    } FileHeader;
     #pragma pack(pop)
-
-    #pragma pack(push, 1)
-    typedef struct DIBHeader
-    {
-        unsigned int headerSize;
-        unsigned int bitmapWidth;
-        unsigned int bitmapHeight;
-        unsigned short colorPlaneCount;
-        unsigned short bitsPerPixel;
-        unsigned int compressionMethod;
-        unsigned int imageSize;
-        int horizontalResolution;
-        int verticalResolution;
-        unsigned int colorPaletteColorCount;
-        unsigned int importantColors;
-    } DIBHeader;
-    #pragma pack(pop)
-
-    #pragma pack(push, 1)
-    typedef struct Bitmap
-    {
-        FileHeader fileHeader;
-        DIBHeader dibHeader;
-    } Bitmap;
-    #pragma pack(pop)
-
 #endif
 
 #endif

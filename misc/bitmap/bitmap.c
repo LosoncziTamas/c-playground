@@ -1,17 +1,6 @@
 #include <stdio.h>
 #include "bitmap.h"
 
-#define BI_RGB              0
-#define BI_RLE8             1
-#define BI_RLE4             2
-#define BI_BITFIELDS        3
-#define BI_JPEG             4
-#define BI_PNG              5
-#define BI_ALPHABITFIELDS   6
-#define BI_CMYK             11
-#define BI_CMYKRLE8         12
-#define BI_CMYKRLE4         13
-
 #define BUFF_SIZE 1024
 
 #define ArrayCount(x) (sizeof(x) / sizeof(x[0]))
@@ -24,11 +13,12 @@ typedef enum LoadError
     READ_ERROR = -3
 } LoadError;
 
-struct ErrorDesc 
+static const struct 
 {
     LoadError code;
     char* message;
-} errorDesc[] = {
+} ErrorDescriptions[] = 
+{
     {SUCCESS, "No error."},
     {FILE_OPEN_ERROR, "File open error."},
     {BUFF_TOO_SMALL, "Buffer to small to read the file."},
@@ -37,14 +27,13 @@ struct ErrorDesc
 
 typedef struct Buffer
 {
-    char data[BUFF_SIZE];
+    unsigned char data[BUFF_SIZE];
     int elementCount;
 } Buffer;
 
-
-
 LoadError LoadBitmap(const char* path, Buffer* buffer)
 {
+    // TODO: load header first
     FILE* file = fopen(path, "r");
 
     if (!file)
@@ -76,25 +65,31 @@ LoadError LoadBitmap(const char* path, Buffer* buffer)
     return SUCCESS;
 }
 
-void PrintError(int errorCode)
+void PrintError(LoadError errorCode)
 {
-    for (int i = 0; i < ArrayCount(errorDesc); ++i)
+    for (int i = 0; i < ArrayCount(ErrorDescriptions); ++i)
     {
-        if (errorCode == errorDesc[i].code)
+        if (errorCode == ErrorDescriptions[i].code)
         {
-            printf("ERROR: %s", errorDesc[i].message);
+            printf("ERROR: %s", ErrorDescriptions[i].message);
         }
     }
 }
 
-int ParseArgs(int argCount, char **args)
+void PrintBitmapHeader(BitmapHeader* header)
 {
-    if (argCount != 2)
+    printf("height: %d  ", header->bitmapHeight);
+    printf("width: %d \n", header->bitmapWidth);
+    printf("image size: %d, \n", header->imageSize);
+    printf("bits per pixel: %u \n", header->bitsPerPixel);
+
+    for (int i = 0; i < ArrayCount(CompressionMethods); ++i)
     {
-        printf("Usage: bitmap <filename> \n");
-        return -1;
+        if (header->compressionMethod == CompressionMethods[i].code)
+        {
+            printf("compression: %d %s \n", CompressionMethods[i].code, CompressionMethods[i].description);
+        }
     }
-    return 0;
 }
 
 int main(int argCount, char **args)
@@ -104,9 +99,21 @@ int main(int argCount, char **args)
     if (result == SUCCESS)
     {
         // TODO: copy memory
-        Bitmap* bitmap = (Bitmap*)memory.data;
-        printf("height: %d  ", bitmap->dibHeader.bitmapHeight);
-        printf("width: %d \n", bitmap->dibHeader.bitmapWidth);
+        BitmapHeader* header = (BitmapHeader*)memory.data;
+        int h = header->bitmapHeight;
+        int w = header->bitmapWidth;
+        
+        PrintBitmapHeader(header);
+
+        int pixelCount = w * h;
+        int bytesPerPixel = header->bitsPerPixel / 8;
+        unsigned char *pixelStorage = memory.data + sizeof(header);
+        int dataCount = memory.elementCount - sizeof(BitmapHeader);
+
+        for (int dataIndex = 0; dataIndex < dataCount; ++dataIndex)
+        {
+            printf("%d ", *(pixelStorage + dataIndex));
+        }
     }
     else
     {
