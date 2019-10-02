@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "bitmap.h"
 
 #define BI_RGB              0
 #define BI_RLE8             1
@@ -40,35 +41,7 @@ typedef struct Buffer
     int elementCount;
 } Buffer;
 
-typedef struct FileHeader
-{
-    char headerField[2];
-    unsigned int bitmapSize;
-    char reserved[4];
-    unsigned int offset;
-} __attribute__((packed)) FileHeader;
 
-typedef struct DIBHeader
-{
-    unsigned int headerSize;
-    unsigned int bitmapWidth;
-    unsigned int bitmapHeight;
-    unsigned short colorPlaneCount;
-    unsigned short bitsPerPixel;
-    unsigned int compressionMethod;
-    unsigned int imageSize;
-    int horizontalResolution;
-    int verticalResolution;
-    unsigned int colorPaletteColorCount;
-    unsigned int importantColors;
-} __attribute__((packed)) DIBHeader;
-
-// TODO: complete bitmap
-typedef struct Bitmap
-{
-    FileHeader fileHeader;
-    DIBHeader dibHeader;
-} __attribute__((packed)) Bitmap;
 
 LoadError LoadBitmap(const char* path, Buffer* buffer)
 {
