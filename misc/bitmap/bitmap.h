@@ -54,7 +54,8 @@ static const struct
 #if __APPLE__ 
     __attribute__((packed)) BitmapHeader;
 #elif _WIN32
+    BitmapHeader;
     #pragma pack(pop)
 #endif
-
+    
 #endif
