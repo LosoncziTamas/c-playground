@@ -28,52 +28,40 @@ static const struct
 typedef struct Buffer
 {
     unsigned char data[BUFF_SIZE];
-    int elementCount;
+    int buffP;
 } Buffer;
 
-LoadError LoadBitmap(const char* path, Buffer* buffer)
+typedef union 
 {
-    // TODO: load header first, use offset to locate pixel data
-    FILE* file = fopen(path, "r");
+   unsigned int value;
+   struct
+   {
+       unsigned char b;
+       unsigned char g;
+       unsigned char r;
+       unsigned char a;
+   };
+} Color32;
 
-    if (!file)
-    {
-        return FILE_OPEN_ERROR;
-    }
-    if (fseek(file, 0, SEEK_END) != 0)
-    {
-        return FILE_OPEN_ERROR;
-    }
-    long elementCount = ftell(file);
-    if (elementCount < 0)
-    {
-        return FILE_OPEN_ERROR;
-    }
-    rewind(file);
-    if (elementCount > ArrayCount(buffer->data))
-    {
-        return BUFF_TOO_SMALL;
-    }
-    int readCount = fread(buffer->data, sizeof(char), elementCount, file);
-    if (readCount != elementCount)
-    {
-        return READ_ERROR;
-    }
-    buffer->elementCount = elementCount;
-    fclose(file);
-
-    return SUCCESS;
-}
-
-void PrintError(LoadError errorCode)
+typedef struct PixelArray32
 {
-    for (int i = 0; i < ArrayCount(ErrorDescriptions); ++i)
+    Color32* pixels;
+    unsigned int w;
+    unsigned int h;
+} PixelArray32;
+
+
+unsigned char* GetMemory(Buffer* buffer, size_t size)
+{
+    unsigned char* result = 0;
+
+    if (size < ArrayCount(buffer->data) - buffer->buffP)
     {
-        if (errorCode == ErrorDescriptions[i].code)
-        {
-            printf("ERROR: %s", ErrorDescriptions[i].message);
-        }
+        result = buffer->data + buffer->buffP;
+        buffer->buffP += size;
     }
+
+    return result;
 }
 
 void PrintHeader(BitmapHeader* header)
@@ -92,38 +80,92 @@ void PrintHeader(BitmapHeader* header)
     }
 }
 
-typedef union 
+LoadError LoadBitmap(const char* path, Buffer* buffer, PixelArray32* pixelArray)
 {
-   unsigned int value;
-   struct
-   {
-       unsigned char b;
-       unsigned char g;
-       unsigned char r;
-       unsigned char a;
-   };
-} Color32;
+    LoadError result = SUCCESS;
+    FILE* file = fopen(path, "r");
+
+    if (file)
+    {
+        if (fseek(file, 0, SEEK_END) == 0)
+        {
+            int elementCount = ftell(file);
+            rewind(file);
+            if (elementCount > sizeof(BitmapHeader))
+            {
+                BitmapHeader* header = (BitmapHeader*) GetMemory(buffer, sizeof(BitmapHeader));
+                if (header)
+                {
+                    if (fread(header, sizeof(BitmapHeader), 1, file) == 1)
+                    {
+                        //TODO: skip with offset
+                        PrintHeader(header);
+                        if (header->bitsPerPixel == 32)
+                        {
+                            pixelArray->h = header->bitmapHeight;
+                            pixelArray->w = header->bitmapWidth;
+                            int pixelCount = pixelArray->h * pixelArray->w;
+                            pixelArray->pixels = (Color32*) GetMemory(buffer, sizeof(Color32) * pixelCount);
+                            fread(pixelArray->pixels, sizeof(Color32), pixelCount, file);
+                            // TODO: fix white color value flaw
+                        }
+                        else
+                        {
+                            // TOOD: error handling
+                        }
+                    }
+                    else
+                    {
+                        result = READ_ERROR;
+                    }
+                }
+                else
+                {
+                    // TODO: Do i need this here?
+                    result = BUFF_TOO_SMALL;
+                }
+            }
+        }
+        else
+        {
+            result = READ_ERROR;
+        }
+        fclose(file);
+    }
+    else
+    {
+        result = FILE_OPEN_ERROR;
+    }
+
+    return result;
+}
+
+void PrintError(LoadError errorCode)
+{
+    for (int i = 0; i < ArrayCount(ErrorDescriptions); ++i)
+    {
+        if (errorCode == ErrorDescriptions[i].code)
+        {
+            printf("ERROR: %s", ErrorDescriptions[i].message);
+        }
+    }
+}
 
 int main(int argCount, char **args)
 {
     Buffer memory = {0};
-    LoadError result = LoadBitmap("bitmap_test.bmp", &memory);
-    if (result == SUCCESS)
-    {
-        // TODO: copy memory
-        BitmapHeader* header = (BitmapHeader*)memory.data;
-        
-        PrintHeader(header);
-        
-        Color32 *pixelArray = (Color32*)(memory.data + header->offset);
+    PixelArray32 pixelArray = {0};
 
-        int h = header->bitmapHeight;
-        int w = header->bitmapWidth;        
+    LoadError result = LoadBitmap("bitmap_test.bmp", &memory, &pixelArray);
+    if (result == SUCCESS)
+    {        
+        int h = pixelArray.h;
+        int w = pixelArray.w;        
         for (int rowIndex = 0; rowIndex < h; ++rowIndex)
         {
             for (int columnIndex = 0; columnIndex < w; ++columnIndex)
             {
-                Color32 pixelColor = pixelArray[rowIndex * w + columnIndex];
+                Color32 pixelColor = pixelArray.pixels[rowIndex * w + columnIndex];
                 // Pixels are stored upside-down.
                 printf("Pixel[%d][%d] = rgba(%03d, %03d, %03d, %03d) \n", columnIndex, h - 1 - rowIndex, pixelColor.r, pixelColor.g, pixelColor.b, pixelColor.a);
             }
