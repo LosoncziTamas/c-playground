@@ -76,7 +76,7 @@ void PrintError(LoadError errorCode)
     }
 }
 
-void PrintBitmapHeader(BitmapHeader* header)
+void PrintHeader(BitmapHeader* header)
 {
     printf("height: %d  ", header->bitmapHeight);
     printf("width: %d \n", header->bitmapWidth);
@@ -92,7 +92,18 @@ void PrintBitmapHeader(BitmapHeader* header)
     }
 }
 
-// TODO: add mask for extrcting color values
+typedef union 
+{
+   unsigned int value;
+   struct
+   {
+       unsigned char b;
+       unsigned char g;
+       unsigned char r;
+       unsigned char a;
+   };
+} Color32;
+
 int main(int argCount, char **args)
 {
     Buffer memory = {0};
@@ -101,19 +112,21 @@ int main(int argCount, char **args)
     {
         // TODO: copy memory
         BitmapHeader* header = (BitmapHeader*)memory.data;
-        int h = header->bitmapHeight;
-        int w = header->bitmapWidth;
         
-        PrintBitmapHeader(header);
+        PrintHeader(header);
+        
+        Color32 *pixelArray = (Color32*)(memory.data + header->offset);
 
-        int bytesPerPixel = header->bitsPerPixel / 8;
-        unsigned char *pixelStorage = memory.data + header->offset;
-        int pixelDataCount = memory.elementCount - header->offset;
-
-        for (int dataIndex = 0; dataIndex < pixelDataCount; ++dataIndex)
+        int h = header->bitmapHeight;
+        int w = header->bitmapWidth;        
+        for (int rowIndex = 0; rowIndex < h; ++rowIndex)
         {
-            unsigned char data = pixelStorage[dataIndex];
-            printf("%d ", data);
+            for (int columnIndex = 0; columnIndex < w; ++columnIndex)
+            {
+                Color32 pixelColor = pixelArray[rowIndex * w + columnIndex];
+                // Pixels are stored upside-down.
+                printf("Pixel[%d][%d] = rgba(%03d, %03d, %03d, %03d) \n", columnIndex, h - 1 - rowIndex, pixelColor.r, pixelColor.g, pixelColor.b, pixelColor.a);
+            }
         }
     }
     else
