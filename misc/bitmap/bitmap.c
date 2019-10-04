@@ -50,7 +50,7 @@ typedef struct PixelArray32
     unsigned int h;
 } PixelArray32;
 
-
+// TODO: do i really need this?
 unsigned char* GetMemory(Buffer* buffer, size_t size)
 {
     unsigned char* result = 0;
@@ -66,10 +66,10 @@ unsigned char* GetMemory(Buffer* buffer, size_t size)
 
 void PrintHeader(BitmapHeader* header)
 {
-    printf("height: %d  ", header->bitmapHeight);
-    printf("width: %d \n", header->bitmapWidth);
-    printf("image size: %d, \n", header->imageSize);
-    printf("bits per pixel: %u \n", header->bitsPerPixel);
+    printf("Height: %d  ", header->bitmapHeight);
+    printf("Width: %d \n", header->bitmapWidth);
+    printf("Image size: %d, \n", header->imageSize);
+    printf("Bits per pixel: %u \n", header->bitsPerPixel);
 
     for (int i = 0; i < ArrayCount(CompressionMethods); ++i)
     {
@@ -90,29 +90,35 @@ LoadError LoadBitmap(const char* path, Buffer* buffer, PixelArray32* pixelArray)
         if (fseek(file, 0, SEEK_END) == 0)
         {
             int elementCount = ftell(file);
-            rewind(file);
             if (elementCount > sizeof(BitmapHeader))
             {
                 BitmapHeader* header = (BitmapHeader*) GetMemory(buffer, sizeof(BitmapHeader));
                 if (header)
                 {
+                    rewind(file);
                     if (fread(header, sizeof(BitmapHeader), 1, file) == 1)
                     {
-                        //TODO: skip with offset
                         PrintHeader(header);
-                        if (header->bitsPerPixel == 32)
+                        if (fseek(file, header->offset, SEEK_SET) == 0)
                         {
-                            pixelArray->h = header->bitmapHeight;
-                            pixelArray->w = header->bitmapWidth;
-                            int pixelCount = pixelArray->h * pixelArray->w;
-                            pixelArray->pixels = (Color32*) GetMemory(buffer, sizeof(Color32) * pixelCount);
-                            fread(pixelArray->pixels, sizeof(Color32), pixelCount, file);
-                            // TODO: fix white color value flaw
+                            if (header->bitsPerPixel == 32)
+                            {
+                                pixelArray->h = header->bitmapHeight;
+                                pixelArray->w = header->bitmapWidth;
+                                pixelArray->pixels = (Color32*) GetMemory(buffer, header->imageSize);
+                                // TODO: assert image size?
+                                fread(pixelArray->pixels, 1, header->imageSize, file);
+                            }
+                            else
+                            {
+                                // TOOD: error handling
+                            }
                         }
                         else
                         {
-                            // TOOD: error handling
+                            result = READ_ERROR;
                         }
+
                     }
                     else
                     {
@@ -151,6 +157,7 @@ void PrintError(LoadError errorCode)
     }
 }
 
+//TODO: parsing args
 int main(int argCount, char **args)
 {
     Buffer memory = {0};
