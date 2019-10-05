@@ -12,6 +12,8 @@
 #define BI_CMYKRLE8         12
 #define BI_CMYKRLE4         13
 
+#define ArrayCount(x) (sizeof(x) / sizeof(x[0]))
+
 static const struct 
 {
     unsigned int code;
@@ -29,6 +31,53 @@ static const struct
     {BI_CMYKRLE8, "RLE-8"},
     {BI_CMYKRLE4, "RLE-4"},
 };
+
+typedef enum ProgramError
+{
+    SUCCESS = 0,
+    INVALID_ARGS,
+    FOPEN_ERROR,
+    FREAD_ERROR,
+    UNSUPPORTED_FORMAT
+} ProgramError;
+
+static const struct 
+{
+    ProgramError code;
+    char* message;
+} ErrorDescriptions[] = 
+{
+    {SUCCESS, "No error."},
+    {INVALID_ARGS, "Invalid argument."}, 
+    {FOPEN_ERROR, "File open error."},
+    {FREAD_ERROR, "File reading error."},
+    {UNSUPPORTED_FORMAT, "Unsupported format. Only 32 bit bitmaps are supported."}
+};
+
+typedef struct Buffer
+{
+    unsigned char data[2048];
+    int buffP;
+} Buffer;
+
+typedef union 
+{
+   unsigned int value;
+   struct
+   {
+       unsigned char b;
+       unsigned char g;
+       unsigned char r;
+       unsigned char a;
+   };
+} Color32;
+
+typedef struct PixelArray32
+{
+    Color32* pixels;
+    unsigned int w;
+    unsigned int h;
+} PixelArray32;
 
 #if _WIN32
     #pragma pack(push, 1)
