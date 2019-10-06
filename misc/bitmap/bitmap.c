@@ -94,6 +94,7 @@ void PrintError(ProgramError errorCode)
 }
 
 // TODO: fix parsing
+// Return methods for strings.
 ProgramError ParseArgs(int argCount, char** args, Buffer* memory, char* fileName)
 {
     ProgramError result = INVALID_ARGS;
@@ -108,8 +109,15 @@ ProgramError ParseArgs(int argCount, char** args, Buffer* memory, char* fileName
             {
                 if (charIndex < len - 3 && strncmp(&arg[charIndex + 1], "bmp", 3) == 0)
                 {
-                    fileName = GetMemory(memory, charIndex + 3);
-                    strncat(fileName, arg, charIndex + 3);
+                    int fileNameLen = charIndex + 4;
+                    printf("charIndex: %d \n", charIndex);
+                    printf("fileNameLen: %d \n", fileNameLen);
+                    char* fn = GetMemory(memory, fileNameLen + 1);
+                    printf("arg: %s \n", arg);
+                    strncpy(fn, arg, fileNameLen);
+                    fn[fileNameLen] = '\0';
+                    printf("fileName: %s \n", fn);
+                    fileName = &fn[0];
                     result = SUCCESS;
                 } 
                 break;
@@ -130,6 +138,7 @@ int main(int argCount, char **args)
     {
         PixelArray32 pixelArray = {0};
         ProgramError result = LoadBitmap(fileName, &memory, &pixelArray);
+        printf("fileName: %s \n", fileName);
         if (result == SUCCESS)
         {        
             int h = pixelArray.h;
