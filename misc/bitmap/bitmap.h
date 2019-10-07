@@ -35,7 +35,6 @@ static const struct
 typedef enum ProgramError
 {
     SUCCESS = 0,
-    INVALID_ARGS,
     FOPEN_ERROR,
     FREAD_ERROR,
     UNSUPPORTED_FORMAT
@@ -48,7 +47,6 @@ static const struct
 } ErrorDescriptions[] = 
 {
     {SUCCESS, "No error."},
-    {INVALID_ARGS, "Invalid argument."}, 
     {FOPEN_ERROR, "File open error."},
     {FREAD_ERROR, "File reading error."},
     {UNSUPPORTED_FORMAT, "Unsupported format. Only 32 bit bitmaps are supported."}

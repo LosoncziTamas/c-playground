@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include "bitmap.h"
 
+#define EXT_LEN 3
+
 unsigned char* GetMemory(Buffer* buffer, size_t size)
 {
     unsigned char* result = 0;
@@ -14,7 +16,7 @@ unsigned char* GetMemory(Buffer* buffer, size_t size)
     }
     else 
     {
-        printf("Unsufficient memory.");
+        printf("Insufficient memory.");
         exit(1);
     }
 
@@ -93,11 +95,9 @@ void PrintError(ProgramError errorCode)
     }
 }
 
-// TODO: fix parsing
-// Return methods for strings.
-ProgramError ParseArgs(int argCount, char** args, Buffer* memory, char* fileName)
+char* ParseFileName(int argCount, char** args, Buffer* memory)
 {
-    ProgramError result = INVALID_ARGS;
+    char* result = 0;
 
     if (argCount > 1)
     {
@@ -107,18 +107,12 @@ ProgramError ParseArgs(int argCount, char** args, Buffer* memory, char* fileName
         {
             if (arg[charIndex] == '.')
             {
-                if (charIndex < len - 3 && strncmp(&arg[charIndex + 1], "bmp", 3) == 0)
+                if (charIndex < len - EXT_LEN && strncmp(&arg[charIndex + 1], "bmp", EXT_LEN) == 0)
                 {
-                    int fileNameLen = charIndex + 4;
-                    printf("charIndex: %d \n", charIndex);
-                    printf("fileNameLen: %d \n", fileNameLen);
-                    char* fn = GetMemory(memory, fileNameLen + 1);
-                    printf("arg: %s \n", arg);
-                    strncpy(fn, arg, fileNameLen);
-                    fn[fileNameLen] = '\0';
-                    printf("fileName: %s \n", fn);
-                    fileName = &fn[0];
-                    result = SUCCESS;
+                    int fileNameLen = charIndex + EXT_LEN + 1;
+                    result = GetMemory(memory, fileNameLen + 1);
+                    strncpy(result, arg, fileNameLen);
+                    result[fileNameLen] = '\0';
                 } 
                 break;
             }
@@ -130,15 +124,13 @@ ProgramError ParseArgs(int argCount, char** args, Buffer* memory, char* fileName
 
 int main(int argCount, char **args)
 {
-    // Create memory buffer on the stack
-    Buffer memory = {0};
+    Buffer memory = {0};    
+    const char* fileName = ParseFileName(argCount, args, &memory);
 
-    char* fileName;
-    if (ParseArgs(argCount, args, &memory, fileName) == SUCCESS)
+    if (fileName)
     {
         PixelArray32 pixelArray = {0};
         ProgramError result = LoadBitmap(fileName, &memory, &pixelArray);
-        printf("fileName: %s \n", fileName);
         if (result == SUCCESS)
         {        
             int h = pixelArray.h;
