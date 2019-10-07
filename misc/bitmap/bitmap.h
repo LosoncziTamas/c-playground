@@ -32,7 +32,7 @@ static const struct
     {BI_CMYKRLE4, "RLE-4"},
 };
 
-typedef enum ProgramError
+typedef enum
 {
     SUCCESS = 0,
     FOPEN_ERROR,
@@ -52,7 +52,7 @@ static const struct
     {UNSUPPORTED_FORMAT, "Unsupported format. Only 32 bit bitmaps are supported."}
 };
 
-typedef struct Buffer
+typedef struct
 {
     unsigned char data[2048];
     int buffP;
@@ -70,7 +70,7 @@ typedef union
    };
 } Color32;
 
-typedef struct PixelArray32
+typedef struct
 {
     Color32* pixels;
     unsigned int w;
@@ -80,7 +80,7 @@ typedef struct PixelArray32
 #if _WIN32
     #pragma pack(push, 1)
 #endif
-    typedef struct BitmapHeader
+    typedef struct
     {
         char headerField[2];
         unsigned int bitmapSize;
