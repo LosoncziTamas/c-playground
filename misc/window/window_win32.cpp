@@ -1,13 +1,10 @@
 #include <stdio.h>
 
+#ifndef UNICODE
+#define UNICODE
+#endif 
+#include <windows.h>
 
-
-#ifdef _WIN32
-    #ifndef UNICODE
-    #define UNICODE
-    #endif 
-    #include <windows.h>
-#endif
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
