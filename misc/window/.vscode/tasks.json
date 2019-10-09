@@ -4,8 +4,10 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "gcc",
-            "args": ["${file}", "-o", "${fileDirname}/${fileBasenameNoExtension}.exe", "-g"],
+            "windows": {
+                "command": "gcc",
+                "args": ["${file}", "-o", "${fileDirname}/${fileBasenameNoExtension}.exe", "-g"]
+            },
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -14,13 +16,17 @@
         {
             "label": "launch",
             "type": "shell",
-            "command": "${fileDirname}/${fileBasenameNoExtension}.exe"
+            "windows": {
+                "command": "${fileDirname}/${fileBasenameNoExtension}.exe"
+            }
         },
         {
             "label": "clean",
             "type": "shell",
-            "command": "rm",
-            "args": ["-r", "${fileDirname}/*.exe", "${fileDirname}/*.dSYM"]
+            "windows": {
+                "command": "rm",
+                "args": ["-r", "${fileDirname}/*.exe"]
+            }
         }
     ]
 }

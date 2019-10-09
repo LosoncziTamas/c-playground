@@ -1,14 +1,11 @@
-#include <stdio.h>
-
 #ifndef UNICODE
 #define UNICODE
 #endif 
 #include <windows.h>
 
-
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow)
+INT WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, INT nCmdShow)
 {
     // Register the window class.
     // const char CLASS_NAME[]  = "Sample Window Class";
