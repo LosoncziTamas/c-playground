@@ -7,6 +7,10 @@
             "windows": {
                 "command": "win32_build.bat",
             },
+            "osx": {
+                "command": "sh",
+                "args": ["mac_build.sh"]
+            },
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -17,14 +21,17 @@
             "type": "shell",
             "windows": {
                 "command": "window.exe"
+            },
+            "osx": {
+                "command" : "./window.out"
             }
         },
         {
             "label": "clean",
             "type": "shell",
-            "windows": {
+            "osx": {
                 "command": "rm",
-                "args": ["-r", "${fileDirname}/*.exe"]
+                "args": ["-r", "*.out", "*.dSYM", "*.o"]
             }
         }
     ]

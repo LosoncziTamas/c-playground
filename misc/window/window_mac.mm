@@ -1,5 +1,10 @@
 #import "Cocoa/Cocoa.h"
 
+extern "C" 
+{
+    #include "common.h"
+}
+
 int main(int argc, const char * argv[])
 {
     // Autorelease Pool:
@@ -13,6 +18,7 @@ int main(int argc, const char * argv[])
     [NSApplication sharedApplication];
 
     //
+
     // Create a window:
     //
 
@@ -41,6 +47,8 @@ int main(int argc, const char * argv[])
 
     // TODO: Create app delegate to handle system events.
     // TODO: Create menus (especially Quit!)
+
+    Update();
 
     // Show window and run event loop.
     [window orderFrontRegardless];
