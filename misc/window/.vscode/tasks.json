@@ -5,8 +5,7 @@
             "label": "build",
             "type": "shell",
             "windows": {
-                "command": "gcc",
-                "args": ["${file}", "-o", "${fileDirname}/${fileBasenameNoExtension}.exe", "-g"]
+                "command": "win32_build.bat",
             },
             "group": {
                 "kind": "build",
@@ -17,7 +16,7 @@
             "label": "launch",
             "type": "shell",
             "windows": {
-                "command": "${fileDirname}/${fileBasenameNoExtension}.exe"
+                "command": "window.exe"
             }
         },
         {
