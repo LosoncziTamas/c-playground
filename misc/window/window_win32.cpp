@@ -44,27 +44,32 @@ INT WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, INT nC
     WNDCLASS wndClass = CreateWindowClass(hInstance);
     RegisterClass(&wndClass);
 
-    HWND hwnd = CreateSimpleWindow(&wndClass, hInstance);
+    HWND window = CreateSimpleWindow(&wndClass, hInstance);
 
-    if (hwnd == NULL)
+    if (window == NULL)
     {
         return 0;
     }
 
-    ShowWindow(hwnd, nCmdShow);
+    ShowWindow(window, nCmdShow);
+
+    bool running = true;
 
     MSG msg = {};
-    while (GetMessage(&msg, NULL, 0, 0))
+    while (running)
     {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
+        if (GetMessage(&msg, NULL, 0, 0))
+        {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
         Update();
     }
 
     return 0;
 }
 
-LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WindowProc(HWND window, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg)
     {
@@ -75,13 +80,26 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         return 0;
         case WM_PAINT:
         {
-            PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hwnd, &ps);
-            FillRect(hdc, &ps.rcPaint, (HBRUSH) (COLOR_WINDOW+1));
-            EndPaint(hwnd, &ps);
+            PAINTSTRUCT paint;
+            HDC deviceContext = BeginPaint(window, &paint);
+
+            RECT clientRect;
+            GetClientRect(window, &clientRect);
+            int width = clientRect.right - clientRect.left;
+            int height = clientRect.bottom - clientRect.top;
+
+            /*
+            StretchDIBits(deviceContext,
+                0, 0, width, height,
+                0, 0, width, height,
+                Buffer->Memory,
+                &Buffer->Info,
+                DIB_RGB_COLORS, SRCCOPY);
+            */
+            EndPaint(window, &paint);
         }
         return 0;
     }
 
-    return DefWindowProc(hwnd, uMsg, wParam, lParam);
+    return DefWindowProc(window, uMsg, wParam, lParam);
 }

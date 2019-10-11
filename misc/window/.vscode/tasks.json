@@ -29,6 +29,10 @@
         {
             "label": "clean",
             "type": "shell",
+            "windows": {
+                "command": "del",
+                "args": ["*.exe", "*.o"]
+            },
             "osx": {
                 "command": "rm",
                 "args": ["-r", "*.out", "*.dSYM", "*.o"]
