@@ -71,6 +71,7 @@ ProgramError LoadBitmap(const char* path, Buffer* buffer, PixelArray32* pixelArr
                         }
                         else
                         {
+                            fclose(file);
                             return UNSUPPORTED_FORMAT;
                         }
                     }
