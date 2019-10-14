@@ -7,6 +7,9 @@
             "windows": {
                 "command": "gcc console.c -o console.exe"
             },
+            "osx": {
+                "command": "clang console.c -o console.out -g"
+            },
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -18,6 +21,16 @@
             "windows": {
                 "command": "console.exe"
             },
+            "osx": {
+                "command": "./console.out"
+            }
+        },
+        {
+            "label": "clean",
+            "type": "shell",
+            "osx": {
+                "command": "rm -r *.out *.dSYM"
+            }
         }
     ]
 }
