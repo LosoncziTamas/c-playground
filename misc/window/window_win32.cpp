@@ -79,7 +79,7 @@ void RenderStuffTobuffer(OffscreenBuffer *buffer)
     for (int i = 0; i < buffer->height * buffer->width; ++i)
     {
         char* pixelMem = (char*)buffer->memory + i;
-        *pixelMem = 255;
+        *pixelMem = 128;
     }
 }
 
