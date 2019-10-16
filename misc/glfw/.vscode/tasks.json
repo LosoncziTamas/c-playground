@@ -5,7 +5,7 @@
             "type": "shell",
             "label": "build",
             "osx": {
-                "command": "sh misc/build-mac.sh"
+                "command": "sh misc/build-mac-dynamic.sh"
             },
             "group": {
                 "kind": "build",
