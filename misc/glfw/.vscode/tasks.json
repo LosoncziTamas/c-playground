@@ -7,6 +7,9 @@
             "osx": {
                 "command": "sh misc/build-mac-dynamic.sh"
             },
+            "windows": {
+                "command": ""
+            },
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -17,14 +20,20 @@
             "label": "clean",
             "osx": {
                 "command": "rm -r *.out *.out.dSYM"
-            }
+            },
+            "windows": {
+                "command": ""
+            },
         },
         {
             "type": "shell",
             "label": "run",
             "osx": {
                 "command": "./main.out"
-            }
+            },
+            "windows": {
+                "command": ""
+            },
         }
     ]
 }
