@@ -8,7 +8,7 @@
                 "command": "sh misc/build-mac-dynamic.sh"
             },
             "windows": {
-                "command": "gcc main.c -o main.exe -Iinclude -Llib-mingw -lglfw3 -lopengl32"
+                "command": "misc\\build-mingw.bat"
             },
             "group": {
                 "kind": "build",
