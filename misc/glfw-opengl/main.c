@@ -5,14 +5,11 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 
-#define ArrayCount(x) (sizeof(x)/sizeof(x[0]))
+#define MAX_FILE_LEN 512
 
-static char FragmentSourceBuffer[512];
-static char VertexSourceBuffer[512];
-
-int LoadShaderToBuffer(const char* fileName, char* buffer, int size)
+char* ReadShader(const char* fileName)
 {
-    int result = false;
+    char* result = NULL;
 
     FILE* file = fopen(fileName, "r");
     if (file)
@@ -21,11 +18,12 @@ int LoadShaderToBuffer(const char* fileName, char* buffer, int size)
         {
             int elementCount = ftell(file);
             rewind(file);
-            if (elementCount > 0 && elementCount < size)
+            if (elementCount > 0 && elementCount < MAX_FILE_LEN)
             {
+                char* buffer = calloc(elementCount + 1, 1);
                 if (fread(buffer, 1, elementCount, file) == elementCount)
                 {
-                    result = true;
+                    result = buffer;
                 }
             }
         }
@@ -39,7 +37,6 @@ void ErrorCallback(int error, const char* description)
 {
     fprintf(stderr, "Error: %s\n", description);
 }
-
 
 void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -88,6 +85,15 @@ void CheckProgramState(GLuint program, GLFWwindow* window)
     }
 }
 
+#define SafeFree(memory) _SafeFree((void*) memory)
+void _SafeFree(void* memory)
+{
+    if (memory)
+    {
+        free(memory);
+    }
+}
+
 int main(void)
 {
     glfwInit();
@@ -108,17 +114,20 @@ int main(void)
         glfwMakeContextCurrent(window);
         glfwSwapInterval(1);
 
-        int shaderSourceLoaded = 
-            LoadShaderToBuffer("main.vert", VertexSourceBuffer, ArrayCount(VertexSourceBuffer)) && 
-            LoadShaderToBuffer("main.frag", FragmentSourceBuffer, ArrayCount(FragmentSourceBuffer));
+        const char* vertexShaderSource = ReadShader("main.vert");
+        const char* fragmentShaderSource = ReadShader("main.frag");
 
-        if (gladLoadGLLoader((GLADloadproc)glfwGetProcAddress) && shaderSourceLoaded)
+        if (gladLoadGLLoader((GLADloadproc)glfwGetProcAddress) && vertexShaderSource && fragmentShaderSource)
         {
             float vertices[] = {
                 -0.5f, -0.5f, 0.0f,
                 0.5f, -0.5f, 0.0f,
                 0.0f,  0.5f, 0.0f
             }; 
+
+            // Enabling alpha blending
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
             
             GLuint vbo;
             glGenBuffers(1, &vbo);
@@ -126,13 +135,13 @@ int main(void)
             glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
             GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-            // TODO: fix crash
-            glShaderSource(vertexShader, 1, &VertexSourceBuffer, NULL);
+            // TODO: why did it crash before?
+            glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
             glCompileShader(vertexShader);
             CheckShaderState(vertexShader, window);
 
             GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-            glShaderSource(fragmentShader, 1, &FragmentSourceBuffer, NULL);
+            glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
             glCompileShader(fragmentShader);
             CheckShaderState(fragmentShader, window);
 
@@ -170,7 +179,8 @@ int main(void)
             glDeleteVertexArrays(1, &vao);
             glDeleteProgram(shaderProgram);
         }
+        SafeFree(fragmentShaderSource);
+        SafeFree(vertexShaderSource);
         glfwDestroyWindow(window);
     }
-
 }

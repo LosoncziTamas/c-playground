@@ -6,4 +6,4 @@ LINKER_FLAGS="-L./lib-mac -lglfw3 -Wl,-rpath,./lib-mac"
 # Required frameworks
 FRAMEWORKS="-framework OpenGL -framework Cocoa -framework IOkit -framework CoreVideo"
 # Performing compilation & dynamic linking
-clang glad.c main.c -o main.out -g -I./include $LINKER_FLAGS $FRAMEWORKS
+clang glad.c main.c -o main.out -Wall -g -I./include $LINKER_FLAGS $FRAMEWORKS
