@@ -62,7 +62,7 @@ void CheckShaderState(GLuint shader, GLFWwindow* window)
     {
         int logLen;
         glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLen);
-        char* infoLog = alloca(logLen * sizeof(char));
+        char* infoLog = alloca(logLen);
         
         glGetShaderInfoLog(shader, logLen, NULL, infoLog);
         glfwSetWindowShouldClose(window, GLFW_TRUE);
@@ -79,7 +79,7 @@ void CheckProgramState(GLuint program, GLFWwindow* window)
     {
         int logLen;
         glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLen);
-        char* infoLog = alloca(logLen * sizeof(char) + 1);
+        char* infoLog = alloca(logLen);
 
         glGetShaderInfoLog(program, logLen, NULL, infoLog);
         glfwSetWindowShouldClose(window, GLFW_TRUE);
