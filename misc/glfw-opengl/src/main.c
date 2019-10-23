@@ -207,8 +207,8 @@ int main(void)
         glfwMakeContextCurrent(window);
         glfwSwapInterval(1);
 
-        const char* vertexShaderSource = ReadShader("main.vert");
-        const char* fragmentShaderSource = ReadShader("main.frag");
+        const char* vertexShaderSource = ReadShader("src/main.vert");
+        const char* fragmentShaderSource = ReadShader("src/main.frag");
 
         if (gladLoadGLLoader((GLADloadproc)glfwGetProcAddress) && vertexShaderSource && fragmentShaderSource)
         {   

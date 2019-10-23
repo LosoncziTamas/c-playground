@@ -32,7 +32,7 @@
                 "command": "./main.out"
             },
             "windows": {
-                "command": "main.exe"
+                "command": "build-mingw\\main.exe"
             },
         }
     ]
