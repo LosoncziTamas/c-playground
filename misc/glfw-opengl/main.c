@@ -20,11 +20,16 @@ char* ReadShader(const char* fileName)
             rewind(file);
             if (elementCount > 0 && elementCount < MAX_FILE_LEN)
             {
+                //TODO: check why fseek and fread element count is inconsistent on Windows
                 char* buffer = calloc(elementCount + 1, 1);
-                if (fread(buffer, 1, elementCount, file) == elementCount)
+                int readCount = fread(buffer, 1, elementCount, file);
+                result = buffer;
+#if __APPLE__
+                if (readCount == elementCount)
                 {
                     result = buffer;
                 }
+#endif
             }
         }
         fclose(file);
