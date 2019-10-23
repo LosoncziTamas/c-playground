@@ -99,6 +99,94 @@ void _SafeFree(void* memory)
     }
 }
 
+void DrawTriangle(GLFWwindow* window)
+{
+    float vertices[] = {
+        -0.5f, -0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f,
+        0.0f,  0.5f, 0.0f
+    }; 
+    
+    GLuint vbo;
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    // Creating a VAO that stores the configuration (vertex data, attributes)
+    GLuint vao;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+
+    // Specifying how to interpret the provided data
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    // Enable vertex attribute at location 0
+    glEnableVertexAttribArray(0);
+
+    while (!glfwWindowShouldClose(window))
+    {
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // Draws using the currently active shader, the defined vertex attribute config and the VBO's data.
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
+
+    glDeleteBuffers(1, &vbo);
+    glDeleteVertexArrays(1, &vao);
+}
+
+void DrawRectangle(GLFWwindow *window)
+{
+    GLuint vao;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+
+    float vertices[] =
+    {
+        - 0.5f, - 0.5f, 0.0f,   // 0: bottom left
+          0.5f, - 0.5f, 0.0f,   // 1: bottom right
+          0.5f,   0.5f, 0.0f,   // 2: top right
+        - 0.5f,   0.5f, 0.0f    // 3: top left
+    };
+
+    GLuint vbo;
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    GLuint indices[] =
+    {
+        2, 1, 3,
+        1, 0, 3
+    };
+
+    GLuint ebo;
+    glGenBuffers(1, &ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    while (!glfwWindowShouldClose(window))
+    {
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
+
+    glDeleteVertexArrays(1, &vao);
+    glDeleteBuffers(1, &vbo);
+    glDeleteBuffers(1, &ebo);
+}
+
 int main(void)
 {
     glfwInit();
@@ -123,21 +211,10 @@ int main(void)
         const char* fragmentShaderSource = ReadShader("main.frag");
 
         if (gladLoadGLLoader((GLADloadproc)glfwGetProcAddress) && vertexShaderSource && fragmentShaderSource)
-        {
-            float vertices[] = {
-                -0.5f, -0.5f, 0.0f,
-                0.5f, -0.5f, 0.0f,
-                0.0f,  0.5f, 0.0f
-            }; 
-
+        {   
             // Enabling alpha blending
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
-            
-            GLuint vbo;
-            glGenBuffers(1, &vbo);
-            glBindBuffer(GL_ARRAY_BUFFER, vbo);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
             GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
             // TODO: why did it crash before?
@@ -160,30 +237,11 @@ int main(void)
 
             glUseProgram(shaderProgram);
 
-            GLuint vao;
-            glGenVertexArrays(1, &vao);
-            glBindVertexArray(vao);
+            DrawRectangle(window);
 
-            // Specifying how to interpret the provided data
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-            // Enable vertex attribute at location 0
-            glEnableVertexAttribArray(0);
-
-            while (!glfwWindowShouldClose(window))
-            {
-                glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-                glClear(GL_COLOR_BUFFER_BIT);
-
-                glDrawArrays(GL_TRIANGLES, 0, 3);
-
-                glfwSwapBuffers(window);
-                glfwPollEvents();
-            }
-
-            glDeleteBuffers(1, &vbo);
-            glDeleteVertexArrays(1, &vao);
             glDeleteProgram(shaderProgram);
         }
+
         SafeFree(fragmentShaderSource);
         SafeFree(vertexShaderSource);
         glfwDestroyWindow(window);
