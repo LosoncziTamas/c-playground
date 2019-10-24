@@ -83,6 +83,7 @@ ReadState ReadTextFile(const char* fileName, Memory* memory, TextFileContent* ou
 
     out->data = GetMemory(memory, elementCount + 1);
     out->length = fread(out->data, 1, elementCount, file);
+    // Element count can be different from read count: CRLF vs. CR line feed. Use LF so files are translated properly.
     if (out->length != elementCount)
     {
         PrintWarning("Inconsistent read count.");
@@ -132,6 +133,65 @@ GLFWwindow* CreateWindow(const char* title)
     return result;
 }
 
+void SetupTriangle()
+{
+    float vertices[] = {
+        -0.5f, -0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f,
+        0.0f,  0.5f, 0.0f
+    }; 
+    
+    GLuint vbo;
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    // Creating a VAO that stores the configuration (vertex data, attributes)
+    GLuint vao;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+
+    // Specifying how to interpret the provided data
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    // Enable vertex attribute at location 0
+    glEnableVertexAttribArray(0);
+}
+
+// TODO: unify state checks
+
+void CheckShaderState(GLuint shader, GLFWwindow* window)
+{
+    int success;
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+    if (!success)
+    {
+        int logLen;
+        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLen);
+        char* infoLog = alloca(logLen);
+        
+        glGetShaderInfoLog(shader, logLen, NULL, infoLog);
+        glfwSetWindowShouldClose(window, GLFW_TRUE);
+        fprintf(stderr, "Shader compilation error: %s\n", infoLog);
+        getchar();
+    }
+}
+
+void CheckProgramState(GLuint program, GLFWwindow* window)
+{
+    int success;
+    glGetProgramiv(program, GL_LINK_STATUS, &success);
+    if (!success)
+    {
+        int logLen;
+        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLen);
+        char* infoLog = alloca(logLen);
+
+        glGetShaderInfoLog(program, logLen, NULL, infoLog);
+        glfwSetWindowShouldClose(window, GLFW_TRUE);
+        fprintf(stderr, "Shader linking error: %s\n", infoLog);
+        getchar();
+    }
+}
 
 int main()
 {
@@ -150,14 +210,40 @@ int main()
                 if (ReadTextFile("src/main.vert", appMemory, &vertexShaderSource) == SUCCESS &&
                     ReadTextFile("src/main.frag", appMemory, &fragmentShaderSource) == SUCCESS)
                 {
+                    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+                    glShaderSource(fragmentShader, 1, &fragmentShaderSource.data, NULL);
+                    glCompileShader(fragmentShader);
+                    CheckShaderState(fragmentShader, window);
+
+                    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+                    glShaderSource(vertexShader, 1, &vertexShaderSource.data, NULL);
+                    glCompileShader(vertexShader);
+                    CheckShaderState(vertexShader, window);
+
+                    GLuint program = glCreateProgram();
+                    glAttachShader(program, fragmentShader);
+                    glAttachShader(program, vertexShader);
+                    glLinkProgram(program);
+                    glDeleteShader(fragmentShader);
+                    glDeleteShader(vertexShader);
+                    CheckProgramState(program, window);
+
+                    glUseProgram(program);
+
+                    SetupTriangle();
+
                     while(!glfwWindowShouldClose(window))
                     {
                         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
                         glClear(GL_COLOR_BUFFER_BIT);
-
+                        
+                        glDrawArrays(GL_TRIANGLES, 0, 3);
+                        
                         glfwSwapBuffers(window);
                         glfwPollEvents();
                     }
+
+                    // TODO: delete VAO and VBO
                 }
             }
             glfwDestroyWindow(window);
