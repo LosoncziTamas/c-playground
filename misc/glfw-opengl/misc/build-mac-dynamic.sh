@@ -1,9 +1,5 @@
 #!/bin/sh
 
-# -Wl tells the compiler front-end to pass an option to the linker
-# -rpath adds a path to the runtime-linker search path
-LINKER_FLAGS="-L./lib-mac -lglfw3 -Wl,-rpath,./lib-mac"
-# Required frameworks
-FRAMEWORKS="-framework OpenGL -framework Cocoa -framework IOkit -framework CoreVideo"
+LINKER_FLAGS="-L./build-mac build-mac/libglfw.3.dylib -Wl,-rpath,./build-mac"
 # Performing compilation & dynamic linking
-clang glad.c main.c -o main.out -Wall -g -I./include $LINKER_FLAGS $FRAMEWORKS
+clang src/*.c -o build-mac/main.out -Wall -g -I./include $LINKER_FLAGS

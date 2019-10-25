@@ -28,7 +28,7 @@
             "name": "(lldb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${fileDirname}/${fileBasenameNoExtension}.out",
+            "program": "build-mac/main.out",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

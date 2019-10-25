@@ -19,7 +19,7 @@
             "type": "shell",
             "label": "clean",
             "osx": {
-                "command": "rm -r *.out *.out.dSYM"
+                "command": "rm -r build-mac/*.out build-mac/*.out.dSYM"
             },
             "windows": {
                 "command": "del *.exe"
@@ -29,7 +29,7 @@
             "type": "shell",
             "label": "run",
             "osx": {
-                "command": "./main.out"
+                "command": "build-mac/main.out"
             },
             "windows": {
                 "command": "build-mingw\\main.exe"
