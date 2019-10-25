@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 
 #define ArraySize(x) (sizeof(x) / sizeof(x[0]))
 
@@ -232,11 +233,21 @@ int main()
 
                     SetupTriangle();
 
+                    GLint vertexColorLocation = glGetUniformLocation(program, "ourColor");
+                    if (vertexColorLocation == -1)
+                    {
+                        glfwSetWindowShouldClose(window, GLFW_TRUE);
+                    }
+
                     while(!glfwWindowShouldClose(window))
                     {
                         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
                         glClear(GL_COLOR_BUFFER_BIT);
                         
+                        float t = glfwGetTime();
+                        float green = (sinf(t) / 2.0f) + 0.5f;
+                        glUniform4f(vertexColorLocation, 0.0f, green, 0.0f, 1.0f);
+
                         glDrawArrays(GL_TRIANGLES, 0, 3);
                         
                         glfwSwapBuffers(window);
