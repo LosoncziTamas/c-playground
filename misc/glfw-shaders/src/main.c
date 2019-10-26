@@ -137,9 +137,9 @@ GLFWwindow* CreateWindow(const char* title)
 void SetupTriangle()
 {
     float vertices[] = {
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        0.0f,  0.5f, 0.0f
+        -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+         0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 
+         0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f
     }; 
     
     GLuint vbo;
@@ -153,9 +153,12 @@ void SetupTriangle()
     glBindVertexArray(vao);
 
     // Specifying how to interpret the provided data
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     // Enable vertex attribute at location 0
     glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 }
 
 // TODO: unify state checks
@@ -233,20 +236,21 @@ int main()
 
                     SetupTriangle();
 
+                    /*
                     GLint vertexColorLocation = glGetUniformLocation(program, "ourColor");
                     if (vertexColorLocation == -1)
                     {
                         glfwSetWindowShouldClose(window, GLFW_TRUE);
-                    }
+                    }*/
 
                     while(!glfwWindowShouldClose(window))
                     {
                         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
                         glClear(GL_COLOR_BUFFER_BIT);
                         
-                        float t = glfwGetTime();
+                        /*float t = glfwGetTime();
                         float green = (sinf(t) / 2.0f) + 0.5f;
-                        glUniform4f(vertexColorLocation, 0.0f, green, 0.0f, 1.0f);
+                        glUniform4f(vertexColorLocation, 0.0f, green, 0.0f, 1.0f);*/
 
                         glDrawArrays(GL_TRIANGLES, 0, 3);
                         
