@@ -5,7 +5,7 @@
             "type": "shell",
             "label": "build",
             "osx": {
-                "command": "sh misc/build-mac-dynamic.sh"
+                "command": "sh misc/build-mac.sh"
             },
             "windows": {
                 "command": "misc\\build-mingw.bat"
@@ -19,7 +19,7 @@
             "type": "shell",
             "label": "clean",
             "osx": {
-                "command": "rm -r *.out *.out.dSYM"
+                "command": "rm -r build-mac/*.out build-mac/*.out.dSYM"
             },
             "windows": {
                 "command": "del build-mingw\\*.exe"
@@ -29,7 +29,7 @@
             "type": "shell",
             "label": "run",
             "osx": {
-                "command": "./main.out"
+                "command": "build-mac/main.out"
             },
             "windows": {
                 "command": "build-mingw\\main.exe"
