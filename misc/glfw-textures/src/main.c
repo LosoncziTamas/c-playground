@@ -28,32 +28,20 @@ int main()
 
         if (window && gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
         {
-            float textureCoords[] =
-            {
-                0.0f, 0.0f,
-                1.0f, 0.0f,
-                0.0f, 1.0f,
-                1.0f, 1.0f
-            };
-
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            float borderColor[] = {1.0f, 1.0f, 0.0f, 1.0f};
-            glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
             int w, h, channels;
             unsigned char* data = stbi_load("misc/wall.jpg", &w, &h, &channels, 0);
             if (data)
             {
+
                 GLuint texture;
                 glGenTextures(1, &texture);
                 glBindTexture(GL_TEXTURE_2D, texture);
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
                 glGenerateMipmap(GL_TEXTURE_2D);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
                 
                 stbi_image_free(data);
             }
@@ -64,10 +52,10 @@ int main()
 
             float vertices[] = 
             {
-                -0.5f, -0.5f, 0.0f, /* bottom-left  */ 0.0f, 0.0f,
-                 0.5f, -0.5f, 0.0f, /* bottom-right */ 1.0f, 0.0f,
-                 0.5f,  0.5f, 0.0f, /* top-right    */ 1.0f, 1.0f,
-                -0.5f,  0.5f, 0.0f, /* top-left     */ 0.0f, 1.0f
+                -1.0f, -1.0f, 0.0f, /* bottom-left  */ 0.0f, 0.0f,
+                 1.0f, -1.0f, 0.0f, /* bottom-right */ 1.0f, 0.0f,
+                 1.0f,  1.0f, 0.0f, /* top-right    */ 1.0f, 1.0f,
+                -1.0f,  1.0f, 0.0f, /* top-left     */ 0.0f, 1.0f
             };
 
             GLuint vbo;

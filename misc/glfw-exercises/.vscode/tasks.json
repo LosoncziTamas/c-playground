@@ -1,0 +1,39 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "build",
+            "osx": {
+                "command": "sh misc/build-mac.sh"
+            },
+            "windows": {
+                "command": "misc\\build-mingw.bat"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "type": "shell",
+            "label": "clean",
+            "osx": {
+                "command": "rm -r build-mac/*.out build-mac/*.out.dSYM"
+            },
+            "windows": {
+                "command": "del *.exe"
+            },
+        },
+        {
+            "type": "shell",
+            "label": "run",
+            "osx": {
+                "command": "build-mac/main.out"
+            },
+            "windows": {
+                "command": "build-mingw\\main.exe"
+            },
+        }
+    ]
+}
