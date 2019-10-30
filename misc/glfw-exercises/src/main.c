@@ -6,17 +6,39 @@
 
 typedef GLuint Shader;
 typedef GLuint Program;
-
-GLuint SetupVAO()
-{
-    
-}
+typedef GLuint VAO;
+typedef GLuint VBO;
 
 void FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }
 
+VBO CreateVBO()
+{
+    float vertices[] =
+    {
+           -0.5f, -0.5f, 0.0f, // bottom-left
+            0.5f, -0.5f, 0.0f, // bottom-right
+            0.0,   0.5f, 0.0f, // center-top
+    };
+
+    VBO result;
+    glGenBuffers(1, &result);
+    glBindBuffer(GL_ARRAY_BUFFER, result);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    return result;
+}
+
+VAO CreateVAO()
+{
+    VAO result;
+    glGenVertexArrays(1, &result);
+    glBindVertexArray(result);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    return result;
+}
 
 Shader CreateShader(GLenum shaderType, const char* source)
 {
@@ -43,10 +65,12 @@ int main()
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwSwapInterval(1);
+
         GLFWwindow* window = CreateWindow("Exercise 1");
 
         if (window && gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
         {
+            glfwMakeContextCurrent(window);
             glfwSetFramebufferSizeCallback(window, FrameBufferSizeCallback);
 
             const char* vertexShaderSource = ReadTextFile("src/ex1.vert");
@@ -63,6 +87,9 @@ int main()
 
                 glUseProgram(program);
 
+                VBO vbo = CreateVBO();
+                VAO vao = CreateVAO();
+
                 while (!glfwWindowShouldClose(window))
                 {
                     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -70,11 +97,17 @@ int main()
                         glfwSetWindowShouldClose(window, GLFW_TRUE);
                     }
 
+                    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
                     glClear(GL_COLOR_BUFFER_BIT);
+                    glDrawArrays(GL_TRIANGLES, 0, 3);
+
                     glfwSwapBuffers(window);
                     glfwPollEvents();
                 }
 
+                glDeleteBuffers(1, &vbo);
+                glDeleteVertexArrays(1, &vao);
+                glDeleteProgram(program);
                 glDeleteShader(vertex);
                 glDeleteShader(fragment);
             }
