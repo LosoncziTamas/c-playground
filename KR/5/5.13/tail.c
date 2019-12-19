@@ -52,34 +52,46 @@ bool ReadArgs(int argc, char ** argv, ParsedArgs *parsedArgs)
 {
     bool success = false;
 
-    // Expected usage: tail <text>
+    // tail <text>
     if (argc == 2)
     {
         char *endP = NULL;
-        int tail = strtol(argv[1], &endP, 10);
+        bool alphabetic = strtol(argv[1], &endP, 10) == 0L;
+        bool startsWithNumber = endP && strlen(endP) > 0;
 
-        if (tail == 0L)
+        if (alphabetic || startsWithNumber)
         {
-            printf("Passed text %s", argv[1]);
-            parsedArgs->length = strlen(argv[1]);
-            parsedArgs->text = GetMemory(parsedArgs->length + 1);
+            int len = strlen(argv[1]);
+            parsedArgs->length = len;
+            parsedArgs->text = GetMemory(len + 1);
             strcpy(parsedArgs->text, argv[1]);
+            parsedArgs->text[len] = '\0';
             parsedArgs->tail = 10;
 
             success = true;
         }
-        // Covering the case when text starts with number.
-        else if (endP && strlen(endP) > 0)
-        {
-            printf("Text starts with number %s", argv[1]);
-
-            success = true;
-        }
     }
+    // tail -n <text> 
     else if (argc == 3)
     {
+        bool prefixed = *argv[1] == '-';
+        int tailValue = prefixed;
 
-        success = true;
+        if (prefixed && strlen(argv[1]) > 1)
+        {
+            tailValue = strtol(argv[1] + 1, NULL, 10);
+        }
+        else
+        {
+            tailValue = strtol(argv[1], NULL, 10);
+        }
+
+        // Is the tail parameter valid?
+        if (tailValue > 0)
+        {
+            printf("Valid tail value: %d", tailValue);
+            success = true;
+        }
     }
 
     return success; 
@@ -87,7 +99,6 @@ bool ReadArgs(int argc, char ** argv, ParsedArgs *parsedArgs)
 
 int main(int argc, char ** argv)
 {
-
     ParsedArgs args = {0};
 
     if (ReadArgs(argc, argv, &args))
@@ -101,5 +112,4 @@ int main(int argc, char ** argv)
     }
 
     return 0;
-
 }
