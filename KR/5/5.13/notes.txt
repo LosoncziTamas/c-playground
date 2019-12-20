@@ -1,0 +1,44 @@
+str1 = "asd \n asbc"
+    start = 5
+    end = 9
+    start = 0
+    end = 4
+str2 = "\n asbc"
+    start = 1
+    end = 5
+    start = 0
+    end = 0
+str3 = "1"
+    start = 0
+    end = 0
+- - - - - 
+
+int Max(int x, int y)
+{
+    return x > y ? x : y;
+}
+
+PrintSubString(const char* str, int start, int end)
+{
+    assert(start <= end);
+    for (char c = 0; start <= end; ++start)
+    {
+        c = *(str + start);
+        putchar(c);
+    }
+    if (*(str + start) != '\n')
+    {
+        putchar('\n');
+    }
+}
+
+end = len - 1;
+for (int i = len - 1; i >= 0; --i)
+{
+    if (str[i] == új sor)
+    {
+        PrintSubString(str, i + 1, end);
+        end = Max(i - 1, 0);
+    }
+}
+PrintSubString(str, 0, end);

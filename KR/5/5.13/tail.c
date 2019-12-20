@@ -3,18 +3,20 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <ctype.h>
+#include <assert.h>
 
 #define ArrayLength(x) (sizeof(x) / sizeof(x[0]))
 #define MAX_MEM 2048
+#define DEFAULT_TAIL 10
 
 static char AppMemory[MAX_MEM];
 static int MemP = 0;
 
 typedef struct 
 {
+    int tail;
     char* text;
     int length;
-    int tail;
 } ParsedArgs;
 
 char* GetMemory(size_t size)
@@ -28,6 +30,21 @@ char* GetMemory(size_t size)
     }
 
     return result;
+}
+
+void PrintArgs(ParsedArgs* args)
+{
+    if (args)
+    {
+        if (args->text)
+        {
+            printf("Tail: %d, text: %s, length: %d.\n", args->tail, args->text, args->length);
+        }
+        else 
+        {
+            printf("Tail: %d, length: %d.\n", args->tail, args->length);
+        }
+    }
 }
 
 void TestGetMemory()
@@ -48,34 +65,39 @@ void TestGetMemory()
     }
 }
 
+bool ParseTextArg(const char* textArg, ParsedArgs *parsedArgs)
+{
+    char *endP = NULL;
+    bool alphabetic = strtol(textArg, &endP, 10) == 0L;
+    bool startsWithNumber = endP && strlen(endP) > 0;
+
+    if (alphabetic || startsWithNumber)
+    {
+        int len = strlen(textArg);
+        parsedArgs->length = len;
+        parsedArgs->text = GetMemory(len + 1);
+        strcpy(parsedArgs->text, textArg);
+        parsedArgs->text[len] = '\0';
+
+        return true;
+    }
+
+    return false;
+}
+
 bool ReadArgs(int argc, char ** argv, ParsedArgs *parsedArgs)
 {
     bool success = false;
 
-    // tail <text>
-    if (argc == 2)
+    if (argc == 2 && ParseTextArg(argv[1], parsedArgs))
     {
-        char *endP = NULL;
-        bool alphabetic = strtol(argv[1], &endP, 10) == 0L;
-        bool startsWithNumber = endP && strlen(endP) > 0;
-
-        if (alphabetic || startsWithNumber)
-        {
-            int len = strlen(argv[1]);
-            parsedArgs->length = len;
-            parsedArgs->text = GetMemory(len + 1);
-            strcpy(parsedArgs->text, argv[1]);
-            parsedArgs->text[len] = '\0';
-            parsedArgs->tail = 10;
-
-            success = true;
-        }
+        parsedArgs->tail = DEFAULT_TAIL;
+        success = true;
     }
-    // tail -n <text> 
     else if (argc == 3)
     {
         bool prefixed = *argv[1] == '-';
-        int tailValue = prefixed;
+        int tailValue = 0;
 
         if (prefixed && strlen(argv[1]) > 1)
         {
@@ -86,15 +108,34 @@ bool ReadArgs(int argc, char ** argv, ParsedArgs *parsedArgs)
             tailValue = strtol(argv[1], NULL, 10);
         }
 
-        // Is the tail parameter valid?
-        if (tailValue > 0)
+        if (tailValue > 0 && ParseTextArg(argv[2], parsedArgs))
         {
-            printf("Valid tail value: %d", tailValue);
+            parsedArgs->tail = tailValue;
             success = true;
         }
     }
 
     return success; 
+}
+
+void PrintSubString(const char* str, int start, int end)
+{
+    assert(start <= end);
+    for (char c = 0; start <= end; ++start)
+    {
+        c = *(str + start);
+        putchar(c);
+    }
+    if (*(str + start) != '\n')
+    {
+        putchar('\n');
+    }
+}
+
+
+int Max(int x, int y)
+{
+    return x > y ? x : y;
 }
 
 int main(int argc, char ** argv)
@@ -103,10 +144,23 @@ int main(int argc, char ** argv)
 
     if (ReadArgs(argc, argv, &args))
     {
-        
+        PrintArgs(&args);
+
+        int end = args.length;
+        for (int i = end; i >= 0; --i)
+        {
+            if (args.text[i] == '\n')
+            {
+                PrintSubString(args.text, i + 1, end);
+                end = Max(i - 1, 0);
+            }
+        }
+        PrintSubString(args.text, 0, end);
+        // args->tail 
     }
     else 
     {
+        PrintArgs(&args);
         printf("Invalid parameters. Usage: tail -n <text>");
         exit(1);
     }
