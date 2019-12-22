@@ -126,10 +126,6 @@ void PrintSubString(const char* str, int start, int end)
         c = *(str + start);
         putchar(c);
     }
-    if (*(str + start) != '\n')
-    {
-        putchar('\n');
-    }
 }
 
 
@@ -144,19 +140,29 @@ int main(int argc, char ** argv)
 
     if (ReadArgs(argc, argv, &args))
     {
-        PrintArgs(&args);
-
+        int lineCounter = 0;
         int end = args.length;
+
+        // TODO: reverse
+        // char** reversedTail = GetMemory(sizeof(char *) * args.tail);
+
         for (int i = end; i >= 0; --i)
         {
-            if (args.text[i] == '\n')
+            bool printLine = args.text[i] == '\n' && i != end && args.tail > lineCounter;
+            if (printLine)
             {
+
                 PrintSubString(args.text, i + 1, end);
+                putchar('\n');
+                ++lineCounter;
                 end = Max(i - 1, 0);
             }
         }
-        PrintSubString(args.text, 0, end);
-        // args->tail 
+        // Printing last remainder line
+        if (args.tail > lineCounter)
+        {
+            PrintSubString(args.text, 0, end);
+        }
     }
     else 
     {
