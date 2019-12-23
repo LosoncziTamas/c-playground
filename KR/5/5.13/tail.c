@@ -140,28 +140,39 @@ int main(int argc, char ** argv)
 
     if (ReadArgs(argc, argv, &args))
     {
-        int lineCounter = 0;
         int end = args.length;
 
-        // TODO: reverse
-        // char** reversedTail = GetMemory(sizeof(char *) * args.tail);
+        char** reversedLines = GetMemory(sizeof(char *) * args.tail);
+        int lineIndex = 0;
 
         for (int i = end; i >= 0; --i)
         {
-            bool printLine = args.text[i] == '\n' && i != end && args.tail > lineCounter;
+            bool printLine = args.text[i] == '\n' && i != end && args.tail > lineIndex;
             if (printLine)
             {
+                int lineLength = end - i;
+                char* line = GetMemory(lineLength + 1);
 
-                PrintSubString(args.text, i + 1, end);
-                putchar('\n');
-                ++lineCounter;
+                // Copy after the new line char
+                memcpy(line, &args.text[i + 1], lineLength);
+                line[lineLength] = '\0';
+                reversedLines[lineIndex] = line;
+
+                lineIndex++;
                 end = Max(i - 1, 0);
             }
         }
         // Printing last remainder line
-        if (args.tail > lineCounter)
+        if (args.tail > lineIndex)
         {
             PrintSubString(args.text, 0, end);
+        }
+
+        printf("%s \n", reversedLines[0]);
+
+        for (; lineIndex > 0; --lineIndex)
+        {
+           
         }
     }
     else 
