@@ -140,11 +140,12 @@ int main(int argc, char ** argv)
 
     if (ReadArgs(argc, argv, &args))
     {
-        int end = args.length;
+        int end = args.length - 1;
 
         char** reversedLines = GetMemory(sizeof(char *) * args.tail);
         int lineIndex = 0;
 
+        // TODO add case for single line
         for (int i = end; i >= 0; --i)
         {
             bool printLine = args.text[i] == '\n' && i != end && args.tail > lineIndex;
@@ -158,6 +159,8 @@ int main(int argc, char ** argv)
                 line[lineLength] = '\0';
                 reversedLines[lineIndex] = line;
 
+                printf("linelegth %d, line: %s \n", lineLength, reversedLines[lineIndex]);
+
                 lineIndex++;
                 end = Max(i - 1, 0);
             }
@@ -165,10 +168,10 @@ int main(int argc, char ** argv)
         // Printing last remainder line
         if (args.tail > lineIndex)
         {
-            PrintSubString(args.text, 0, end);
+            // PrintSubString(args.text, 0, end);
         }
 
-        printf("%s \n", reversedLines[0]);
+        //printf("%s \n", reversedLines[0]);
 
         for (; lineIndex > 0; --lineIndex)
         {
