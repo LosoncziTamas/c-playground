@@ -47,24 +47,6 @@ void PrintArgs(ParsedArgs* args)
     }
 }
 
-void TestGetMemory()
-{
-    const char* strA= "Sample text";
-    int len = strlen(strA);
-    char* strB = GetMemory(len + 1);
-
-    if (strB)
-    {
-        strcpy(strB, strA);
-        *(strB + len) = '\0';
-        printf("%s", strB);
-    }
-    else 
-    {
-        printf("Not enough memory.");
-    }
-}
-
 bool ParseTextArg(const char* textArg, ParsedArgs *parsedArgs)
 {
     char *endP = NULL;
@@ -118,17 +100,6 @@ bool ReadArgs(int argc, char ** argv, ParsedArgs *parsedArgs)
     return success; 
 }
 
-void PrintSubString(const char* str, int start, int end)
-{
-    assert(start <= end);
-    for (char c = 0; start <= end; ++start)
-    {
-        c = *(str + start);
-        putchar(c);
-    }
-}
-
-
 int Max(int x, int y)
 {
     return x > y ? x : y;
@@ -143,39 +114,31 @@ int main(int argc, char ** argv)
         int end = args.length - 1;
 
         char** reversedLines = GetMemory(sizeof(char *) * args.tail);
-        int lineIndex = 0;
+        int lineCounter = 0;
 
         // TODO add case for single line
+        // TODO add case for starting with new line char
         for (int i = end; i >= 0; --i)
         {
-            bool printLine = args.text[i] == '\n' && i != end && args.tail > lineIndex;
-            if (printLine)
+            bool printLine = args.text[i] == '\n' && i != end && args.tail > lineCounter;
+            if (printLine) 
             {
                 int lineLength = end - i;
-                char* line = GetMemory(lineLength + 1);
+                char *line = GetMemory(lineLength + 1);
 
                 // Copy after the new line char
                 memcpy(line, &args.text[i + 1], lineLength);
                 line[lineLength] = '\0';
-                reversedLines[lineIndex] = line;
+                reversedLines[lineCounter] = line;
 
-                printf("linelegth %d, line: %s \n", lineLength, reversedLines[lineIndex]);
-
-                lineIndex++;
+                lineCounter++;
                 end = Max(i - 1, 0);
             }
         }
-        // Printing last remainder line
-        if (args.tail > lineIndex)
-        {
-            // PrintSubString(args.text, 0, end);
-        }
 
-        //printf("%s \n", reversedLines[0]);
-
-        for (; lineIndex > 0; --lineIndex)
+        for (int i = lineCounter - 1; i >= 0; --i) 
         {
-           
+            printf("%s \n", reversedLines[i]);
         }
     }
     else 
