@@ -70,9 +70,19 @@ int NumberComparator(char* s1, char* s2)
     return a < b ? -1 : (a > b ? 1 : 0);
 }
 
+int ReverseNumberComparator(char* s1, char* s2)
+{
+    return NumberComparator(s2, s1);
+}
+
 int StringComparator(char* s1, char* s2)
 {
     return strcmp(s1, s2);
+}
+
+int ReverseStringComparator(char* s1, char* s2)
+{
+    return strcmp(s2, s1);
 }
 
 void Swap(char* v[], int i, int j)
@@ -106,12 +116,32 @@ void QuickSort(char *data[], int left, int right, int (*comparator)(char*, char*
 
 int main(int argc, char* argv[])
 {
-    bool isNumeric = argc > 1 && strcmp(argv[1], "-n") == 0;
+    bool isNumeric = false;
+    bool reverse = false;
+
+    if (argc == 2)
+    {
+        isNumeric = strcmp(argv[1], "-n") == 0;
+        reverse = strcmp(argv[1], "-r") == 0;
+    } 
+    else if (argc == 3)
+    {
+        isNumeric = strcmp(argv[1], "-n") == 0 || strcmp(argv[2], "-n") == 0;
+        reverse = strcmp(argv[1], "-r") == 0 || strcmp(argv[2], "-r") == 0;
+    }
+
     int lineCount = ReadLines(lines, MAXLINES);
 
     if (lineCount > 0)
     {
-        QuickSort(lines, 0, lineCount - 1, isNumeric ? NumberComparator : StringComparator);
+        if (isNumeric)
+        {
+            QuickSort(lines, 0, lineCount - 1, reverse ? ReverseNumberComparator : NumberComparator);
+        }
+        else
+        {
+            QuickSort(lines, 0, lineCount - 1, reverse ? ReverseStringComparator : StringComparator);
+        }
         WriteLines(lines, lineCount);
         return 0;
     }
