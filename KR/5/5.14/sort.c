@@ -147,5 +147,6 @@ int main(int argc, char* argv[])
     }
 
     printf(lineCount == 0 ? "No input to sort.\n" : "Input too big to sort.\n");
+    
     return 1;
 }
